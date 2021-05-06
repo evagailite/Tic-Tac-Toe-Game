@@ -1,0 +1,14 @@
+Tic-Tac-Toe game.
+
+Game rules:
+https://www.merriam-webster.com/dictionary/tic-tac-toe#:~:text=%3A%20a%20game%20in%20which%20two,Os%20before%20the%20opponent%20does
+
+The game will be created for two players - one of them will be CPU.
+
+The game will be starting with printing the board.
+In the console will appear a description of the move - the first player has to choose a number from the board to place the mark.
+After placing the mark, the board will appear again and ask the other player (CPU) for their move. 
+That process will be continued until one player wins or the board is filled up (indicating that a tie occurred). 
+
+Results of the game will be stored in the database.
+
