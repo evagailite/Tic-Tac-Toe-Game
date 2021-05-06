@@ -1,28 +1,14 @@
-Tic-Tac-Toe game.
+Console-based Tic-Tac-Toe game for two players. The user plays against the computer that chooses moves using a random number generator. 
 
 Game rules:
 https://www.merriam-webster.com/dictionary/tic-tac-toe#:~:text=%3A%20a%20game%20in%20which%20two,Os%20before%20the%20opponent%20does
 
-The game will be created for two players - one of them will be CPU.
-  Vlad: Does that mean that you will program artificial player? Will you just list all possible moves? Or will you use Artificial Intelligence? Or will CPU just make random moves?
+When the game starts, program must display the board with possible moves. The user (1st player) must choose a number from the board to make a move. 
+In the chosen position must appear "X".
+After the 1st player move, the program must display the board again and a computer (2nd player) generates a random number for a move. 
+In the chosen position must appear "O".
+The process must proceed until one of the players wins or the board is filled up (indicating that a tie occurred).
+At the end of the game, the program announces the winner and displays the game moves from the database.
 
-The game will be starting with printing the board.
-In the console will appear a description of the move - the first player has to choose a number from the board to place the mark.
-After placing the mark, the board will appear again and ask the other player (CPU) for their move. 
-That process will be continued until one player wins or the board is filled up (indicating that a tie occurred). 
-  Vlad: this paragraph above is more like "How program will work" than "What program should do". So that is more a design, than a requirement.  
-  Vlad: FYI - in general requirements frequently sound like: "Program must/should/may do/be able/..."
-  Vlad: Btw, you could, for example, say that "The game should print a board before the game and after each turn". "The game should ask user where to put X or O using console."...
+Each player's moves must be stored in the database. 
 
-
-Results of the game will be stored in the database.
-  Vlad: If you change "will" with "must" then this one is correct requirement. :)
-  Vlad: Please specify what exactly database should store. Is it only user name and score?
-  Vlad: In addition to what you will specify - I would like to see a history (all moves) of each game stored in a database.
-
-
-Vlad:
-TODO:
-1. Rephrase the first requirement (about CPU) so that it is clear what CPU should do (what is approach for CPU player)
-2. I think th paragraph about how game is going on - you can move it completely to another file: DESIGN.txt -> there you will later also add more details...
-3. Clarify information about what should be stored in database.
