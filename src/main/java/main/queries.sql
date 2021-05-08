@@ -10,7 +10,7 @@ age INTEGER
 --2nd table for player 1 - user
 CREATE TABLE IF NOT EXISTS player1 (
 id_user INTEGER AUTO_INCREMENT PRIMARY KEY,
-player_username TEXT REFERENCES username(id_username),
+player_username INTEGER REFERENCES username(id_username),
 player_moves INTEGER,
 player_score INTEGER
 );
@@ -19,7 +19,7 @@ player_score INTEGER
 CREATE TABLE IF NOT EXISTS playerPcu (
 id_pcu INTEGER AUTO_INCREMENT PRIMARY KEY,
 pcu_moves INTEGER,
-pcu_opponent TEXT REFERENCES username(id_username),
+pcu_opponent INTEGER REFERENCES username(id_username),
 pcu_score INTEGER
 );
 
