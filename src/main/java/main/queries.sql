@@ -23,3 +23,54 @@ pcu_opponent INTEGER REFERENCES username(id_username),
 pcu_score INTEGER
 );
 
+--4th table for game results
+CREATE TABLE IF NOT EXISTS results (
+id_score INTEGER AUTO_INCREMENT PRIMARY KEY,
+win INTEGER,
+loose INTEGER,
+tie INTEGER,
+);
+
+--add constance for game results
+INSERT INTO results
+(win, loose, tie) VALUES
+(?, ?, ?);
+
+--display username table
+SELECT * FROM username;
+
+--display player1 table;
+SELECT * FROM player1;
+
+--display cpu table
+SELECT * FROM cpu;
+
+--add data about username
+INSERT INTO username
+(username, name, age) VALUES
+(?, ?, ?);
+
+--add player1 moves
+INSERT INTO player1
+(moves) VALUES
+(?);
+
+--add cpu moves
+INSERT INTO cpu
+(moves) VALUES
+(?);
+
+--add player1 score
+INSERT INTO player1
+(score) VALUES
+(?);
+
+--add cpu score
+INSERT INTO cpu
+(score) VALUES
+(?);
+
+
+
+
+
