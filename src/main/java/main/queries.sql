@@ -7,34 +7,38 @@ name TEXT NOT NULL,
 age INTEGER
 );
 
---2nd table for player 1 - user
-CREATE TABLE IF NOT EXISTS player1 (
-id_user INTEGER AUTO_INCREMENT PRIMARY KEY,
-player_username INTEGER REFERENCES username(id_username),
-player_moves INTEGER,
-player_score INTEGER
+--2nd table for game results
+CREATE TABLE IF NOT EXISTS results (
+id_results INTEGER AUTO_INCREMENT PRIMARY KEY,
+win INTEGER,
+loose INTEGER,
+tie INTEGER
 );
 
---3rd table for player 2 - pcu
+--3rd table for player 1 - user
+CREATE TABLE IF NOT EXISTS player1 (
+id_user INTEGER AUTO_INCREMENT PRIMARY KEY,
+player_username BIGINT,
+foreign key (player_username) REFERENCES username(id_username),
+player_moves INTEGER,
+player_score BIGINT,
+foreign key (player_score) REFERENCES results(id_results)
+);
+
+--4th table for player 2 - pcu
 CREATE TABLE IF NOT EXISTS playerPcu (
 id_pcu INTEGER AUTO_INCREMENT PRIMARY KEY,
 pcu_moves INTEGER,
-pcu_opponent INTEGER REFERENCES username(id_username),
-pcu_score INTEGER
-);
-
---4th table for game results
-CREATE TABLE IF NOT EXISTS results (
-id_score INTEGER AUTO_INCREMENT PRIMARY KEY,
-win INTEGER,
-loose INTEGER,
-tie INTEGER,
+pcu_opponent BIGINT,
+foreign key (pcu_opponent) REFERENCES username(id_username),
+pcu_score BIGINT,
+foreign key (pcu_score) REFERENCES results(id_results)
 );
 
 --add constance for game results
 INSERT INTO results
 (win, loose, tie) VALUES
-(?, ?, ?);
+(2, 0, 1);
 
 --display username table
 SELECT * FROM username;
@@ -69,6 +73,21 @@ INSERT INTO player1
 INSERT INTO cpu
 (score) VALUES
 (?);
+
+--add opponent for cpu
+INSERT INTO playerPcu
+(pcu_opponent) VALUES
+(?);
+
+-- display player rank(scores)
+
+-- display all games played by specific player
+SELECT * FROM player1 WHERE username = ?;
+
+-- count total cpu score
+SELECT SUM(score) FROM playerPcu;
+
+-- count total score for specific player
 
 
 
