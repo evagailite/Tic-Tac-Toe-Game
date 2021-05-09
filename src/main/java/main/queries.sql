@@ -1,72 +1,31 @@
 
---table for creating a user
+--that will store information about each user. (e.g. one row - one user)
 CREATE TABLE IF NOT EXISTS users (
-id_username INTEGER AUTO_INCREMENT PRIMARY KEY,
-username TEXT NOT NULL,
+username TEXT NOT NULL PRIMARY KEY,
 name TEXT NOT NULL,
 age INTEGER
 );
 
---table for game results, consist of all possible ending
-CREATE TABLE IF NOT EXISTS results (
-id_results INTEGER AUTO_INCREMENT PRIMARY KEY,
-win INTEGER,
-loose INTEGER,
-tie INTEGER
+--that will store information about the game participants and result (who won) - (e.g. one row - one game)
+--player2 must be pcu
+CREATE TABLE IF NOT EXISTS games (
+id INTEGER AUTO_INCREMENT PRIMARY KEY,
+player1 TEXT,
+player2 TEXT,
+result TEXT,
+foreign key (player1) REFERENCES users(username)
 );
 
+--that will store information about moves for all the games. (e.g. one row - one move).
 CREATE TABLE IF NOT EXISTS moves (
-id_moves INTEGER AUTO_INCREMENT PRIMARY KEY,
-player_positions INTEGER,
-pcu_positions INTEGER,
+id INTEGER AUTO_INCREMENT PRIMARY KEY,
+player TEXT,
+game INTEGER,
+position_on_board INTEGER,
+foreign key (player) REFERENCES users(username),
+foreign key (game) REFERENCES games(id)
 );
 
-CREATE TABLE IF NOT EXISTS game (
-id_user INTEGER AUTO_INCREMENT PRIMARY KEY,
-player_1 INTEGER,
-player_2 INTEGER,
-player_1_score INTEGER,
-player_2_score INTEGER,
-foreign key (player_1) REFERENCES player1(id_user)
-foreign key (player_2) REFERENCES playerPcu(id_pcu),
-foreign key (player_1_score) REFERENCES results(id_results),
-foreign key (player_2_score) REFERENCES results(id_results)
-);
-
---table for player1 - user
-CREATE TABLE IF NOT EXISTS player1 (
-id_user INTEGER AUTO_INCREMENT PRIMARY KEY,
-player_username BIGINT,
-player_moves BIGINT,
-player_score BIGINT,
-foreign key (player_username) REFERENCES users(id_username),
-foreign key (player_moves) REFERENCES moves(id_moves),
-foreign key (player_score) REFERENCES game(id_user)
-);
-
---table for player2 - pcu
-CREATE TABLE IF NOT EXISTS playerPcu (
-id_pcu INTEGER AUTO_INCREMENT PRIMARY KEY,
-pcu_moves BIGINT,
-pcu_opponent BIGINT,
-pcu_score BIGINT,
-foreign key (pcu_moves) REFERENCES moves(id_moves),
-foreign key (pcu_opponent) REFERENCES users(id_username),
-foreign key (pcu_score) REFERENCES game(id_user)
-);
-
---table played games
-CREATE TABLE IF NOT EXISTS playedGames (
-id_played_game INTEGER AUTO_INCREMENT PRIMARY KEY,
-player_one INTEGER,
-player_two INTEGER,
-player_one_moves INTEGER,
-player_two_moves INTEGER,
-foreign key (player_one) REFERENCES username(id_username),
-foreign key (player_two) REFERENCES playerPcu(id_pcu),
-foreign key (player_one_moves) REFERENCES moves(id_moves),
-foreign key (player_two_moves) REFERENCES moves(id_moves),
-);
 
 -------------------------------------------
 --add data about username
