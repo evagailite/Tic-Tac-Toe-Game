@@ -17,6 +17,7 @@ foreign key (player1) REFERENCES users(username)
 );
 
 --that will store information about moves for all the games. (e.g. one row - one move).
+--in pcu case player will be null
 CREATE TABLE IF NOT EXISTS moves (
 id INTEGER AUTO_INCREMENT PRIMARY KEY,
 player TEXT,
@@ -26,49 +27,37 @@ foreign key (player) REFERENCES users(username),
 foreign key (game) REFERENCES games(id)
 );
 
-
 -------------------------------------------
 --add data about username
 INSERT INTO username
 (username, name, age) VALUES
 (?, ?, ?);
 
---add constance for game results
-INSERT INTO results
-(win, loose, tie) VALUES
-(2, 0, 1);
+--add pcu as player in the games table
+INSERT INTO games
+(player2) VALUES
+"pcu";
 
---add player1 position
+--add moves. Possible numbers from 1-9
 INSERT INTO moves
-(player_positions) VALUES
+(position_on_board) VALUES
 (?);
 
---add pcu positions
-INSERT INTO moves
-(pcu_positions) VALUES
+--add results in the game. Possible options - player_win, cpu_win, tie
+INSERT INTO games
+(result) VALUES
 (?);
 
 ------------------------------------------
---display username table
-SELECT * FROM username;
+--display all existing games
+SELECT * FROM games;
 
---display player1 table;
-SELECT * FROM player1;
+--display moves for certain game
+SELECT player, position_on_board
+FROM moves
+WHERE game = ?;
 
---display cpu table
-SELECT * FROM playerPcu;
 
---display played games
-SELECT * FROM playedGames;
-
-__________________________________________
--- display all games played by specific player
-SELECT * FROM player1 WHERE username = ?;
-
--- count total cpu score
-SELECT SUM(score) FROM playerPcu;
-
--- count total score for specific player
 
 
 
