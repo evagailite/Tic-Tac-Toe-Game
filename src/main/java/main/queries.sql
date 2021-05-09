@@ -24,12 +24,12 @@ pcu_positions INTEGER,
 CREATE TABLE IF NOT EXISTS game (
 id_user INTEGER AUTO_INCREMENT PRIMARY KEY,
 player_1 INTEGER,
-foreign key (player_1) REFERENCES player1(id_user)
 player_2 INTEGER,
-foreign key (player_2) REFERENCES playerPcu(id_pcu),
 player_1_score INTEGER,
-foreign key (player_1_score) REFERENCES results(id_results),
 player_2_score INTEGER,
+foreign key (player_1) REFERENCES player1(id_user)
+foreign key (player_2) REFERENCES playerPcu(id_pcu),
+foreign key (player_1_score) REFERENCES results(id_results),
 foreign key (player_2_score) REFERENCES results(id_results)
 );
 
@@ -37,10 +37,10 @@ foreign key (player_2_score) REFERENCES results(id_results)
 CREATE TABLE IF NOT EXISTS player1 (
 id_user INTEGER AUTO_INCREMENT PRIMARY KEY,
 player_username BIGINT,
-foreign key (player_username) REFERENCES users(id_username),
 player_moves BIGINT,
-foreign key (player_moves) REFERENCES moves(id_moves),
 player_score BIGINT,
+foreign key (player_username) REFERENCES users(id_username),
+foreign key (player_moves) REFERENCES moves(id_moves),
 foreign key (player_score) REFERENCES game(id_user)
 );
 
@@ -48,10 +48,10 @@ foreign key (player_score) REFERENCES game(id_user)
 CREATE TABLE IF NOT EXISTS playerPcu (
 id_pcu INTEGER AUTO_INCREMENT PRIMARY KEY,
 pcu_moves BIGINT,
-foreign key (pcu_moves) REFERENCES moves(id_moves),
 pcu_opponent BIGINT,
-foreign key (pcu_opponent) REFERENCES users(id_username),
 pcu_score BIGINT,
+foreign key (pcu_moves) REFERENCES moves(id_moves),
+foreign key (pcu_opponent) REFERENCES users(id_username),
 foreign key (pcu_score) REFERENCES game(id_user)
 );
 
@@ -59,12 +59,12 @@ foreign key (pcu_score) REFERENCES game(id_user)
 CREATE TABLE IF NOT EXISTS playedGames (
 id_played_game INTEGER AUTO_INCREMENT PRIMARY KEY,
 player_one INTEGER,
-foreign key (player_one) REFERENCES username(id_username),
 player_two INTEGER,
-foreign key (player_two) REFERENCES playerPcu(id_pcu),
 player_one_moves INTEGER,
-foreign key (player_one_moves) REFERENCES moves(id_moves),
 player_two_moves INTEGER,
+foreign key (player_one) REFERENCES username(id_username),
+foreign key (player_two) REFERENCES playerPcu(id_pcu),
+foreign key (player_one_moves) REFERENCES moves(id_moves),
 foreign key (player_two_moves) REFERENCES moves(id_moves),
 );
 
@@ -90,8 +90,6 @@ INSERT INTO moves
 (?);
 
 ------------------------------------------
-
-
 --display username table
 SELECT * FROM username;
 
@@ -99,12 +97,12 @@ SELECT * FROM username;
 SELECT * FROM player1;
 
 --display cpu table
-SELECT * FROM cpu;
+SELECT * FROM playerPcu;
 
+--display played games
+SELECT * FROM playedGames;
 
-
-
-
+__________________________________________
 -- display all games played by specific player
 SELECT * FROM player1 WHERE username = ?;
 
