@@ -1,13 +1,25 @@
+-- Alright. THat is definetely too much tables.
+-- Let me give you a hint. You can complete a task with 3 tabels:
+-- 1. users - that will store information about each user. (e.g. one row - one user)
+-- 2. games - that will store information about the game participants and result (who won) - (e.g. one row - one game)
+-- 3. moves - that will store information about moves for all the games. (e.g. one row - one move).
+-- With these 3 tables you will never need to change any existing row. You will only put new rows each time when needed.
+-- Please try and figure how to relate these tables.
+
+
 
 --table for creating a user
 CREATE TABLE IF NOT EXISTS users (
-id_username INTEGER AUTO_INCREMENT PRIMARY KEY,
+id_username INTEGER AUTO_INCREMENT PRIMARY KEY, -- I don't think that you need separate PRIMARY KEY in this table. 
+  -- I mean you will only have unique user names, right? So the username can be a primary key. 
+  -- So I suggest remove id_username column completely and make username column a PRIMARY KEY
 username TEXT NOT NULL,
 name TEXT NOT NULL,
 age INTEGER
 );
 
 --table for game results, consist of all possible ending
+-- Not clear what this table is needed for
 CREATE TABLE IF NOT EXISTS results (
 id_results INTEGER AUTO_INCREMENT PRIMARY KEY,
 win INTEGER,
@@ -15,11 +27,13 @@ loose INTEGER,
 tie INTEGER
 );
 
+-- Not clear what this table is needed for
 CREATE TABLE IF NOT EXISTS moves (
 id_moves INTEGER AUTO_INCREMENT PRIMARY KEY,
 player_positions INTEGER,
 pcu_positions INTEGER,
 );
+
 
 CREATE TABLE IF NOT EXISTS game (
 id_user INTEGER AUTO_INCREMENT PRIMARY KEY,
