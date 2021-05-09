@@ -28,7 +28,7 @@ foreign key (game) REFERENCES games(id)
 );
 
 -------------------------------------------
---add data about username
+--add data about user
 INSERT INTO username
 (username, name, age) VALUES
 (?, ?, ?);
