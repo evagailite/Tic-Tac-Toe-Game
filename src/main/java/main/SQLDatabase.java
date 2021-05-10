@@ -136,6 +136,56 @@ public class SQLDatabase {
         }
     }
 
+    private static void addUser() {
+        try (Connection connection = getConnection()) {
 
+            System.out.println("Enter a username: ");
+            String username = scanner.nextLine();
+
+            System.out.print("Enter a name: ");
+            String name = scanner.nextLine();
+
+            System.out.print("Enter age: ");
+            int age = Integer.parseInt(scanner.nextLine());
+
+            try (PreparedStatement preparedStatement = connection.prepareStatement(ADD_USER)) {
+                preparedStatement.setString(1, username);
+                preparedStatement.setString(2, name);
+                preparedStatement.setInt(3, age);
+                preparedStatement.executeUpdate();
+            }
+        } catch (SQLException throwables) {
+            System.out.println("Something went wrong " + throwables.getMessage());
+            throwables.printStackTrace();
+        }
+
+    }
+
+
+    private static void addMoves(int value) {
+        try (Connection connection = getConnection()) {
+            try (PreparedStatement preparedStatement = connection.prepareStatement(ADD_MOVES)) {
+                preparedStatement.setInt(1, value);
+                preparedStatement.executeUpdate();
+            }
+        } catch (SQLException throwables) {
+            System.out.println("Something went wrong " + throwables.getMessage());
+            throwables.printStackTrace();
+        }
+
+    }
+
+    private static void addResult(String result) {
+        try (Connection connection = getConnection()) {
+            try (PreparedStatement preparedStatement = connection.prepareStatement(ADD_RESULT)) {
+                preparedStatement.setString(1, result);
+                preparedStatement.executeUpdate();
+            }
+        } catch (SQLException throwables) {
+            System.out.println("Something went wrong " + throwables.getMessage());
+            throwables.printStackTrace();
+        }
+
+    }
 
 }
