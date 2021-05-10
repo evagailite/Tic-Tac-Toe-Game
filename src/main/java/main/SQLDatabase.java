@@ -1,8 +1,7 @@
 package main;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.Scanner;
 
 public class SQLDatabase {
     // JDBC driver name and database URL
@@ -16,6 +15,7 @@ public class SQLDatabase {
     public static Connection getConnection() throws SQLException {
         return DriverManager.getConnection(DB_URL, USER, PASS);
     }
+
 
     //CREATE TABLE FOR USER
     public static final String TABLE_USERS = "users";
@@ -87,6 +87,55 @@ public class SQLDatabase {
     public static final String DISPLAY_GAME_MOVES = "SELECT  " + PLAYER + ", " + POSITION_ON_BOARD +
             " FROM " + TABLE_MOVES + " WHERE " + GAME + "=?";
     ///NEED TO JOIN TABLES
+
+    private static Scanner scanner = new Scanner(System.in);
+
+//    public static void main(String[] args) {
+//        try (Connection connection = getConnection()) {
+//            prepareDatabase(connection);
+//            workWithConnection(connection);
+//        } catch (SQLException throwables) {
+//            System.out.println(throwables.getMessage());
+//            throwables.printStackTrace();
+//        }
+//    }
+
+    private static void prepareDatabase(Connection connection) throws SQLException {
+        try (Statement statement = connection.createStatement()) {
+            int update = statement.executeUpdate(CREATE_TABLE_USER);
+            System.out.println("Table successfully created " + update);
+            update = statement.executeUpdate(CREATE_TABLE_GAMES);
+            System.out.println("Table successfully created " + update);
+            update = statement.executeUpdate(CREATE_TABLE_MOVES);
+            System.out.println("Table successfully created " + update);
+        }
+    }
+
+//    private static void workWithConnection(Connection connection) throws SQLException {
+//        while (true) {
+//            Action nextAction = getActionFromUser();
+//            switch (nextAction) {
+//                case PRINT_COUNT_OF_SONGS:
+//                    printCountOfSongs(connection);
+//                    break;
+//                case PRINT_COUNT_OF_ALBUMS:
+//                    break;
+//                case PRINT_COUNT_OF_ARTISTS:
+//                    break;
+//
+//                case EXIT:
+//                    return;
+//        }
+//    }
+
+    private static void displayAllGames(Connection connection) throws SQLException {
+        try (Statement statement = connection.createStatement()) {
+            try (ResultSet resultSet = statement.executeQuery(DISPLAY_GAMES)) {
+//                printAllColumns(resultSet);
+            }
+        }
+    }
+
 
 
 }
