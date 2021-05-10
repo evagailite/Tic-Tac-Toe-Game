@@ -17,68 +17,76 @@ public class SQLDatabase {
         return DriverManager.getConnection(DB_URL, USER, PASS);
     }
 
-    //CREATE TABLE FOR USERNAME
-    public static final String TABLE_USERNAME = "username";
+    //CREATE TABLE FOR USER
+    public static final String TABLE_USERS = "users";
 
-    public static final String COLUMN_ID = "id";
-    public static final String COLUMN_USERNAME = "username";
-    public static final String COLUMN_NAME = "name";
-    public static final String COLUMN_AGE = "age";
+    public static final String USERNAME = "username";
+    public static final String NAME = "name";
+    public static final String AGE = "age";
 
-    private static final String CREATE_TABLE_USERNAME = "CREATE TABLE IF NOT EXISTS " + TABLE_USERNAME + " (" +
-            COLUMN_ID + " INTEGER AUTO_INCREMENT PRIMARY KEY, " +
-            COLUMN_USERNAME + " TEXT NOT NULL, " +
-            COLUMN_NAME + " TEXT NOT NULL, " +
-            COLUMN_AGE + " INTEGER, " +
+    private static final String CREATE_TABLE_USER = "CREATE TABLE IF NOT EXISTS " + TABLE_USERS + " (" +
+            USERNAME + " TEXT NOT NULL PRIMARY KEY, " +
+            NAME + " TEXT NOT NULL, " +
+            AGE + " INTEGER " +
             ");";
 
-    //CREATE TABLE FOR
-    public static final String TABLE_PLAYER_1 = "player1";
+    //CREATE TABLE FOR GAMES
+    public static final String TABLE_GAMES = "games";
 
-    public static final String PLAYER_1_ID = "id";
-    public static final String PLAYER_USERNAME = "username";
-    public static final String PLAYER_1_MOVES = "moves";
-    public static final String PLAYER_SCORE = "score";
+    public static final String ID_GAMES = "id_games";
+    public static final String PLAYER_1 = "player1";
+    public static final String PLAYER_2 = "player2";
+    public static final String RESULT = "result";
 
-    private static final String CREATE_TABLE_PLAYER_1 = "CREATE TABLE IF NOT EXISTS " + TABLE_PLAYER_1 + " (" +
-            PLAYER_1_ID + " INTEGER AUTO_INCREMENT PRIMARY KEY, " +
-            PLAYER_1_MOVES + " INTEGER, " +
-            PLAYER_USERNAME + " TEXT REFERENCES " + TABLE_USERNAME + "(" + COLUMN_ID + ")," +
-            PLAYER_SCORE + " INTEGER " +
+    private static final String CREATE_TABLE_GAMES = "CREATE TABLE IF NOT EXISTS " + TABLE_GAMES + " (" +
+            ID_GAMES + " INTEGER AUTO_INCREMENT PRIMARY KEY, " +
+            PLAYER_1 + " TEXT NOT NULL, " +
+            PLAYER_2 + " TEXT NOT NULL, " +
+            RESULT + " TEXT NULL, " +
+            " foreign key " + "(" + PLAYER_1 + ")" + " REFERENCES " + TABLE_USERS + "(" + USERNAME + ")," +
+            " foreign key " + "(" + PLAYER_2 + ")" + " REFERENCES " + TABLE_USERS + "(" + USERNAME + ")" +
             ");";
 
-    public static final String TABLE_PCU = "pcu";
+    //CREATE TABLE MOVES
+    public static final String TABLE_MOVES = "moves";
 
-    public static final String PCU_ID = "id";
-    public static final String PCU_OPPONENT = "opponent";
-    public static final String PCU_MOVES = "moves";
-    public static final String PCU_SCORE = "score";
+    public static final String ID_MOVES = "id_moves";
+    public static final String PLAYER = "player";
+    public static final String GAME = "game";
+    public static final String POSITION_ON_BOARD = "position_on_board";
 
-    private static final String CREATE_TABLE_PCU = "CREATE TABLE IF NOT EXISTS " + TABLE_PCU + " (" +
-            PCU_ID + " INTEGER AUTO_INCREMENT PRIMARY KEY, " +
-            PCU_MOVES + " INTEGER, " +
-            PCU_OPPONENT + " TEXT REFERENCES " + TABLE_USERNAME + "(" + COLUMN_ID + ")," +
-            PCU_SCORE + " INTEGER " +
+    private static final String CREATE_TABLE_MOVES = "CREATE TABLE IF NOT EXISTS " + TABLE_MOVES + " (" +
+            ID_MOVES + " INTEGER AUTO_INCREMENT PRIMARY KEY, " +
+            PLAYER + " TEXT, " +
+            GAME + " INTEGER, " +
+            POSITION_ON_BOARD + " INTEGER, " +
+            " foreign key " + "(" + PLAYER + ")" + " REFERENCES " + TABLE_USERS + "(" + USERNAME + ")," +
+            " foreign key " + "(" + GAME + ")" + " REFERENCES " + TABLE_GAMES + "(" + ID_GAMES + ")" +
             ");";
 
-    public static final String DISPLAY_TABLE_USERNAME = "SELECT * FROM " + TABLE_USERNAME + ";";
+    //ADD USERS
+    public static final String ADD_USER = "INSERT INTO " + TABLE_USERS + " (" + USERNAME + ", " +
+            NAME + ", " + AGE + ") VALUES ( ?, ?, ?);";
 
-    public static final String DISPLAY_TABLE_PLAYER_1 = "SELECT * FROM " + TABLE_PLAYER_1 + ";";
-    ///NEED TO JOIN TABLES WHERE USERNAME IS ?
+    //ADD PCU AS 2ND PLAYER
+    public static final String ADD_USER_PCU = "INSERT INTO " + TABLE_USERS + " (" + USERNAME + ", " +
+            NAME + ") VALUES ( ?, ?);";
 
-    public static final String DISPLAY_TABLE_PCU = "SELECT * FROM " + TABLE_PCU + ";";
+    //ADD MOVES. POSSIBLE NUMBERS FROM 1-9
+    public static final String ADD_MOVES = "INSERT INTO " + TABLE_MOVES + " (" + POSITION_ON_BOARD + ") " +
+            "VALUES ( ?);";
+
+    //ADD RESULT IN THE GAME. POSSIBLE OPTIONS - PLAYER_WIN, CPU_WIN, TIE
+    public static final String ADD_RESULT = "INSERT INTO " + TABLE_GAMES + " (" + RESULT + ") " +
+            "VALUES ( ?);";
+
+    //DISPLAY ALL EXISTING GAMES
+    public static final String DISPLAY_GAMES = "SELECT * FROM " + TABLE_GAMES + ";";
+
+    //DISPLAY MOVES FOR CERTAIN GAME
+    public static final String DISPLAY_GAME_MOVES = "SELECT  " + PLAYER + ", " + POSITION_ON_BOARD +
+            " FROM " + TABLE_MOVES + " WHERE " + GAME + "=?";
     ///NEED TO JOIN TABLES
 
-    public static final String ADD_USERNAME = "INSERT INTO " + TABLE_USERNAME + " (" + COLUMN_USERNAME + ", " +
-            COLUMN_NAME + ", " + COLUMN_AGE + ") VALUES ( ?, ?, ?);";
 
-    public static final String ADD_MOVES_PLAYER_1 = "INSERT INTO " + TABLE_PLAYER_1 + " (" + PLAYER_1_MOVES + ") VALUES ( ? );";
-
-    public static final String ADD_MOVES_PCU = "INSERT INTO " + TABLE_PCU + " (" + PCU_MOVES + ") VALUES ( ? );";
-
-    public static final String ADD_SCORE_PLAYER_1 = "INSERT INTO " + TABLE_PLAYER_1 + " (" + PLAYER_SCORE + ") VALUES ( ? );";
-
-    public static final String ADD_SCORE_PCU = "INSERT INTO " + TABLE_PCU + " (" + PCU_SCORE + ") VALUES ( ? );";
-
-    //COUNT? FOR SCORES TO DISPLAY
 }
