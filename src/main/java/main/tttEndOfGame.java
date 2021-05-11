@@ -41,7 +41,7 @@ public class tttEndOfGame {
         }
     }
 
-    private static void printActions() {
+    public static void printActions() {
         System.out.println("\nPress");
         System.out.println("\t 0 - print actions");
         System.out.println("\t 1 - I want to play again");

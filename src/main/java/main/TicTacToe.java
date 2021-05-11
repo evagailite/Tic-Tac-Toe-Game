@@ -8,71 +8,71 @@ public class TicTacToe {
     static ArrayList<Integer> playerPositions = new ArrayList<Integer>();
     static ArrayList<Integer> cpuPositions = new ArrayList<Integer>();
 
-    public static void main(String[] args) {
-
-        //have to place empty spaces with a numbers, for easy playing
-
-        char[][] gameBoard = {{' ', '|', ' ', '|', ' '}, //0
-                {'-', '+', '-', '+', '-'},
-                {' ', '|', ' ', '|', ' '},               //2
-                {'-', '+', '-', '+', '-'},
-                {' ', '|', ' ', '|', ' '}};              //4
-
-        printGameBoard(gameBoard);
-
-        //infinitive loop
-        //in the game loop
-        //get input from the user using a scanner in the position 1-9
-        // stored input and checked is there a winner
-
-        while (true) {
-            Scanner scanner = new Scanner(System.in);
-            System.out.println("Enter your placement (1-9): ");
-            int playerPosition = scanner.nextInt();
-
-            //while they not enter correct position, keep asking to put correct until they do
-            while (playerPositions.contains(playerPosition) ||
-                    cpuPositions.contains(playerPosition)) {
-                System.out.println("Position is taken! Enter a correct position");
-                playerPosition = scanner.nextInt();
-            }
-
-            //always check a winner and the result after each player and cpu move
-            String result = checkWinner();
-            if (result.length() > 0) {
-                System.out.println(result);
-                break;
-            }
-
-            placePiece(gameBoard, playerPosition, "player");
-
-            //printGameBoard(gameBoard);
-
-            result = checkWinner();
-            if (result.length() > 0) {
-                System.out.println(result);
-                break;
-            }
-
-            //cpu makes move
-            //store input
-            //check if there is a winner
-            Random random = new Random();
-            int cpuPosition = random.nextInt(9) + 1;
-            while (playerPositions.contains(cpuPosition) ||
-                    cpuPositions.contains(cpuPosition)) {
-                cpuPosition = random.nextInt(9) + 1;
-            }
-
-            placePiece(gameBoard, cpuPosition, "cpu");
-
-            printGameBoard(gameBoard);
-
-        }
-
-    }
-
-    private static void printGameBoard(char[][] gameBoard) {
+//    public static void main(String[] args) {
+//
+//        //have to place empty spaces with a numbers, for easy playing
+//
+//        char[][] gameBoard = {{' ', '|', ' ', '|', ' '}, //0
+//                {'-', '+', '-', '+', '-'},
+//                {' ', '|', ' ', '|', ' '},               //2
+//                {'-', '+', '-', '+', '-'},
+//                {' ', '|', ' ', '|', ' '}};              //4
+//
+//        printGameBoard(gameBoard);
+//
+//        //infinitive loop
+//        //in the game loop
+//        //get input from the user using a scanner in the position 1-9
+//        // stored input and checked is there a winner
+//
+//        while (true) {
+//            Scanner scanner = new Scanner(System.in);
+//            System.out.println("Enter your placement (1-9): ");
+//            int playerPosition = scanner.nextInt();
+//
+//            //while they not enter correct position, keep asking to put correct until they do
+//            while (playerPositions.contains(playerPosition) ||
+//                    cpuPositions.contains(playerPosition)) {
+//                System.out.println("Position is taken! Enter a correct position");
+//                playerPosition = scanner.nextInt();
+//            }
+//
+//            //always check a winner and the result after each player and cpu move
+//            String result = checkWinner();
+//            if (result.length() > 0) {
+//                System.out.println(result);
+//                break;
+//            }
+//
+//            placePiece(gameBoard, playerPosition, "player");
+//
+//            //printGameBoard(gameBoard);
+//
+//            result = checkWinner();
+//            if (result.length() > 0) {
+//                System.out.println(result);
+//                break;
+//            }
+//
+//            //cpu makes move
+//            //store input
+//            //check if there is a winner
+//            Random random = new Random();
+//            int cpuPosition = random.nextInt(9) + 1;
+//            while (playerPositions.contains(cpuPosition) ||
+//                    cpuPositions.contains(cpuPosition)) {
+//                cpuPosition = random.nextInt(9) + 1;
+//            }
+//
+//            placePiece(gameBoard, cpuPosition, "cpu");
+//
+//            printGameBoard(gameBoard);
+//
+//        }
+//
+//    }
+//
+    public static void printGameBoard(char[][] gameBoard) {
         for (char[] row : gameBoard) {
             for (char symbol : row) {
                 System.out.print(symbol);
