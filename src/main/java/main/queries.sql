@@ -1,11 +1,15 @@
 
 --that will store information about each user. (e.g. one row - one user)
 CREATE TABLE IF NOT EXISTS users (
-  username VARCHAR(50) NOT NULL,
-  PRIMARY KEY (username(5)),
-  name TEXT NOT NULL,
+  username VARCHAR(50),
+  name VARCHAR(50),
   age INTEGER
 );
+
+ALTER TABLE users ALTER COLUMN username VARCHAR(50) NOT NULL;
+
+ALTER TABLE users ADD CONSTRAINT pk_username
+PRIMARY KEY (username);
 
 --that will store information about the game participants and result (who won) - (e.g. one row - one game)
 --player2 must be pcu
