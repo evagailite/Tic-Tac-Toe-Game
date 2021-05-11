@@ -1,7 +1,8 @@
 
 --that will store information about each user. (e.g. one row - one user)
 CREATE TABLE IF NOT EXISTS users (
-  username TEXT NOT NULL PRIMARY KEY,
+  username VARCHAR(50) NOT NULL,
+  PRIMARY KEY (username(5)),
   name TEXT NOT NULL,
   age INTEGER
 );
@@ -61,6 +62,11 @@ SELECT * FROM games;
 SELECT player, position_on_board
 FROM moves
 WHERE game = ?;
+
+--  search for entered username
+SELECT username
+FROM users
+WHERE username = ?;
 
 
 

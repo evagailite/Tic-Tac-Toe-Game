@@ -6,7 +6,7 @@ import java.util.Scanner;
 public class SQLDatabase {
     // JDBC driver name and database URL
     private static final String JDBC_DRIVER = "org.h2.Driver";
-    private static final String DB_URL = "jdbc:h2:D:\\SheGoesTech2021\\DB\\db\\testdb";
+    private static final String DB_URL = "jdbc:h2:D:\\SheGoesTech2021\\FinalProjectTeam1";
 
     //  Database credentials
     private static final String USER = "sa";
@@ -15,7 +15,6 @@ public class SQLDatabase {
     public static Connection getConnection() throws SQLException {
         return DriverManager.getConnection(DB_URL, USER, PASS);
     }
-
 
     //CREATE TABLE FOR USER
     public static final String TABLE_USERS = "users";
@@ -86,19 +85,28 @@ public class SQLDatabase {
     //DISPLAY MOVES FOR CERTAIN GAME
     public static final String DISPLAY_GAME_MOVES = "SELECT  " + PLAYER + ", " + POSITION_ON_BOARD +
             " FROM " + TABLE_MOVES + " WHERE " + GAME + "=?";
-    ///NEED TO JOIN TABLES
+
+    //SEARCH FOR EXISTING USERNAME
+    public static final String CHECK_FOR_USER = "SELECT " + USERNAME + " FROM " + TABLE_USERS + " WHERE " +
+            USERNAME + "=?";
+
 
     private static Scanner scanner = new Scanner(System.in);
 
-//    public static void main(String[] args) {
-//        try (Connection connection = getConnection()) {
-//            prepareDatabase(connection);
-//            workWithConnection(connection);
-//        } catch (SQLException throwables) {
-//            System.out.println(throwables.getMessage());
-//            throwables.printStackTrace();
-//        }
-//    }
+    public static void main(String[] args) {
+
+        try (Connection connection = getConnection()) {
+            prepareDatabase(connection);
+            //  workWithConnection(connection);
+        } catch (SQLException throwables) {
+            System.out.println("Something went wrong " + throwables.getMessage());
+            throwables.printStackTrace();
+        }
+
+        searchForUsername();
+
+    }
+
 
     private static void prepareDatabase(Connection connection) throws SQLException {
         try (Statement statement = connection.createStatement()) {
@@ -161,7 +169,6 @@ public class SQLDatabase {
 
     }
 
-
     private static void addMoves(int value) {
         try (Connection connection = getConnection()) {
             try (PreparedStatement preparedStatement = connection.prepareStatement(ADD_MOVES)) {
@@ -188,4 +195,49 @@ public class SQLDatabase {
 
     }
 
+    private static void searchForUsername() {
+        try (Connection connection = getConnection()) {
+
+            System.out.println("Enter a username: ");
+            String username = scanner.nextLine();
+            //check if user exists
+            try (PreparedStatement preparedStatement = connection.prepareStatement(CHECK_FOR_USER)) {
+                preparedStatement.setString(1, username);
+                preparedStatement.executeUpdate();
+                try (ResultSet rs = preparedStatement.executeQuery()) {
+                    if (rs.next()) {
+                        username = rs.getString(USERNAME);
+                        System.out.println(username + " existing");
+                    } else {
+                        //if username don't exists, add new
+                        addUser();
+                    }
+                }
+            } catch (SQLException throwables) {
+                System.out.println("Something went wrong " + throwables.getMessage());
+                throwables.printStackTrace();
+            }
+
+        } catch (SQLException throwables) {
+            System.out.println("Something went wrong " + throwables.getMessage());
+            throwables.printStackTrace();
+        }
+
+
+
+
+
+    /*
+    try {
+        1. get a connection to database
+        2. Create statement
+        3. Execute sql statement
+        4. Process the result set
+    }
+    catch (Exception exc){
+    exc.printStackTrace
+    }
+     */
+
+    }
 }
