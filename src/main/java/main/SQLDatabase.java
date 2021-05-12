@@ -109,15 +109,11 @@ public class SQLDatabase {
             throwables.printStackTrace();
         }
 
-//        // Loop to allow different users to log in.
-//        while (true) {
-//            String username = login();
-//            playGame(username);
-//        }
-
-        searchForUsername();
-
-        playGame();
+        // Loop to allow different users to log in.
+        while (true) {
+            String username = login();
+            //playGame(username);
+        }
 
 
     }
@@ -267,7 +263,7 @@ public class SQLDatabase {
 
     }
 
-    private static void searchForUsername() {
+    private static String login() {
         try (Connection connection = getConnection()) {
 
             System.out.print("To start playing a game, enter a username: ");
@@ -301,6 +297,7 @@ public class SQLDatabase {
             throwables.printStackTrace();
         }
 
+        return null;
     }
 //
 //    private static String login() {
