@@ -109,34 +109,28 @@ public class SQLDatabase {
             throwables.printStackTrace();
         }
 
-        // Loop to allow different users to log in.
-        while (true) {
-            String username = login();
-            playGame(username);
-        }
+//        // Loop to allow different users to log in.
+//        while (true) {
+//            String username = login();
+//            playGame(username);
+//        }
+
+        searchForUsername();
+
+        playGame();
 
 
     }
 
-    private static void playGame(String user) {
+    private static void prepareDatabase(Connection connection) throws SQLException {
+        try (Statement statement = connection.createStatement()) {
+            statement.executeUpdate(CREATE_TABLE_USER);
+            statement.executeUpdate(CREATE_TABLE_GAMES);
+            statement.executeUpdate(CREATE_TABLE_MOVES);
+        }
+    }
 
-        boolean playAgain = false;
-        do {
-            // Prepare game
-
-           // makeTurns(user);        // Actual game
-
-            // Game ended....
-            // What are we going to do next?
-            do {
-                // 1. Get next action
-                // 2a. If logout: return
-                // 2b. If describe: show describe info and continue.
-                // 2c. If play again: playAgain = true and break
-                // 2d. If incorrect option - ask again
-            } while (true);
-        } while (playAgain);
-
+    private static void playGame() {
         TicTacToe ticTacToe = new TicTacToe();
 
         char[][] gameBoard = {{' ', '|', ' ', '|', ' '}, //0
@@ -191,15 +185,7 @@ public class SQLDatabase {
             ticTacToe.placePiece(gameBoard, cpuPosition, "cpu");
 
             ticTacToe.printGameBoard(gameBoard);
-        }
-    }
 
-
-    private static void prepareDatabase(Connection connection) throws SQLException {
-        try (Statement statement = connection.createStatement()) {
-            statement.executeUpdate(CREATE_TABLE_USER);
-            statement.executeUpdate(CREATE_TABLE_GAMES);
-            statement.executeUpdate(CREATE_TABLE_MOVES);
         }
     }
 
@@ -239,7 +225,6 @@ public class SQLDatabase {
             System.out.println("Something went wrong " + throwables.getMessage());
             throwables.printStackTrace();
         }
-
 
 
     }
@@ -331,7 +316,7 @@ public class SQLDatabase {
 
     }
 
-    private static String login(){
+    private static String login() {
         // 1. Ask user to enter name
         // 2. Check if user already registered
         // 3a. Register user
@@ -435,5 +420,5 @@ public class SQLDatabase {
 //            }
 //        }
 
-
 }
+
