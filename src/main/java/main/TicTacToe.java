@@ -2,7 +2,7 @@ package main;
 
 import java.util.*;
 
-public class TicTacToe {
+public class TicTacToe extends SQLDatabase {
 
     //arraylist of integers for player position
     static ArrayList<Integer> playerPositions = new ArrayList<Integer>();

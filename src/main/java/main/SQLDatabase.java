@@ -1,8 +1,7 @@
 package main;
 
 import java.sql.*;
-import java.util.Random;
-import java.util.Scanner;
+import java.util.*;
 
 public class SQLDatabase {
     // JDBC driver name and database URL
@@ -93,6 +92,10 @@ public class SQLDatabase {
     public static final String CHECK_FOR_USER = "SELECT " + USERNAME + " FROM " + TABLE_USERS + " WHERE " +
             USERNAME + "=?";
 
+    //ADD PLAYER IN THE MOVES TABLE
+    public static final String ADD_PLAYER_IN_THE_MOVES_TABLE = "INSERT INTO " + TABLE_MOVES + "(" + PLAYER +
+            ") SELECT " + USERNAME + " FROM " + TABLE_USERS + " WHERE " + USERNAME + "=?";
+
 
     private static Scanner scanner = new Scanner(System.in);
 
@@ -106,52 +109,50 @@ public class SQLDatabase {
             throwables.printStackTrace();
         }
 
-
-
         searchForUsername();
 
         playAGame();
 
-        //in the end of the game, print options
-        tttEndOfGame tttEndOfGame = new tttEndOfGame();
-
-        boolean quit = false;
-        while (!quit) {
-
-
-            tttEndOfGame.printActions();
-
-            int choice = 0;
-            System.out.println("Please choose next action:");
-            choice = scanner.nextInt();
-            scanner.nextLine();
-
-            switch (choice) {
-                case 0:
-                    tttEndOfGame.printActions();
-                    break;
-                case 1:
-                    System.out.println("The game starts from the start! New round!");
-                    playAGame();
-                    break;
-                case 2:
-                    System.out.println("Logging out!");
-                    searchForUsername();
-                    break;
-                case 3:
-                    //   listOfGames();
-                case 4:
-                    //   chooseGameToSeeMoves();
-                    break;
-                case 5:
-                   // quit = true;
-                    break;
-                default:
-                    System.out.println("Invalid input! Please choose again");
-                    tttEndOfGame.printActions();
-                    break;
-            }
-        }
+//        //in the end of the game, print options
+//        tttEndOfGame tttEndOfGame = new tttEndOfGame();
+//
+//        boolean quit = false;
+//        while (!quit) {
+//
+//
+//            tttEndOfGame.printActions();
+//
+//            int choice = 0;
+//            System.out.println("Please choose next action:");
+//            choice = scanner.nextInt();
+//            scanner.nextLine();
+//
+//            switch (choice) {
+//                case 0:
+//                    tttEndOfGame.printActions();
+//                    break;
+//                case 1:
+//                    System.out.println("The game starts from the start! New round!");
+//                    playAGame();
+//                    break;
+//                case 2:
+//                    System.out.println("Logging out!");
+//                    searchForUsername();
+//                    break;
+//                case 3:
+//                    //   listOfGames();
+//                case 4:
+//                    //   chooseGameToSeeMoves();
+//                    break;
+//                case 5:
+//                   // quit = true;
+//                    break;
+//                default:
+//                    System.out.println("Invalid input! Please choose again");
+//                    tttEndOfGame.printActions();
+//                    break;
+//            }
+//        }
 
     }
 
@@ -169,13 +170,15 @@ public class SQLDatabase {
         while (true) {
             Scanner scanner = new Scanner(System.in);
             System.out.println("Enter your placement (1-9): ");
-            int playerPosition = scanner.nextInt();
+            int playerPosition = (scanner.nextInt());
+            addMoves(playerPosition);
 
             //while they not enter correct position, keep asking to put correct until they do
             while (ticTacToe.playerPositions.contains(playerPosition) ||
                     ticTacToe.cpuPositions.contains(playerPosition)) {
                 System.out.println("Position is taken! Enter a correct position");
                 playerPosition = scanner.nextInt();
+                addMoves(playerPosition);
             }
 
             //always check a winner and the result after each player and cpu move
@@ -247,12 +250,17 @@ public class SQLDatabase {
                 preparedStatement.setInt(3, age);
                 preparedStatement.executeUpdate();
                 System.out.println("Welcome " + username + " to the game Tic-Tac-Toe");
+
+                //insert player in the moves table
+                addPlayerInTheMovesTable(username);
             }
 
         } catch (SQLException throwables) {
             System.out.println("Something went wrong " + throwables.getMessage());
             throwables.printStackTrace();
         }
+
+
 
     }
 
@@ -266,7 +274,18 @@ public class SQLDatabase {
             System.out.println("Something went wrong " + throwables.getMessage());
             throwables.printStackTrace();
         }
+    }
 
+    private static void addPlayerInTheMovesTable(String username) {
+        try (Connection connection = getConnection()) {
+            try (PreparedStatement preparedStatement = connection.prepareStatement(ADD_PLAYER_IN_THE_MOVES_TABLE)) {
+                preparedStatement.setString(1, username);
+                preparedStatement.executeUpdate();
+            }
+        } catch (SQLException throwables) {
+            System.out.println("Something went wrong " + throwables.getMessage());
+            throwables.printStackTrace();
+        }
     }
 
     private static void addResult(String result) {
@@ -294,6 +313,10 @@ public class SQLDatabase {
                     if (rs.next()) {
                         username = rs.getString(USERNAME);
                         System.out.println("Welcome " + username + " to the game Tic-Tac-Toe");
+
+                        //insert player in the moves table
+                        addPlayerInTheMovesTable(username);
+
                     } else {
                         //if username doesn't exists, add new
                         System.out.println(username + " not found. Please create a new user to play");
@@ -327,4 +350,55 @@ public class SQLDatabase {
      */
 
     }
+
+    public static String checkWinner() {
+
+        List topRow = Arrays.asList(1, 2, 3);
+        List middleRow = Arrays.asList(4, 5, 6);
+        List bottomRow = Arrays.asList(7, 8, 9);
+
+        List leftColumn = Arrays.asList(1, 4, 7);
+        List middleColumn = Arrays.asList(2, 5, 8);
+        List rightColumn = Arrays.asList(3, 6, 9);
+
+        List cross1 = Arrays.asList(1, 5, 9);
+        List cross2 = Arrays.asList(7, 5, 3);
+
+        List<List> winning = new ArrayList<List>();
+
+        winning.add(topRow);
+        winning.add(middleRow);
+        winning.add(bottomRow);
+
+        winning.add(leftColumn);
+        winning.add(middleColumn);
+        winning.add(rightColumn);
+
+        winning.add(cross1);
+        winning.add(cross2);
+
+        for (List lists : winning) {
+            if (TicTacToe.playerPositions.containsAll(lists)) {
+                addResult("PLAYER_WINS");
+                return "Congratulations you won!";
+            } else if (TicTacToe.cpuPositions.containsAll(lists)) {
+                addResult("CPU_WINS");
+                return "CPU wins!";
+            } else if (TicTacToe.playerPositions.size() + TicTacToe.cpuPositions.size() == 9) {
+                addResult("TIE");
+                return "TIE!";
+            }
+        }
+
+        //bug
+        // If you place a winning piece as the last move -
+        // it will still register as a Tie,
+        // since the last "else if" in the for loop
+        // Need to put this check as a separate if statement outside the for loop and it solves it.
+
+        //didn't print the game board (put the last number) after print CAT
+
+        return "";
+    }
+
 }

@@ -2,7 +2,7 @@
 --that will store information about each user. (e.g. one row - one user)
 CREATE TABLE IF NOT EXISTS users (
   username VARCHAR(50) NOT NULL,
-  name VARCHAR(50)NOT NULL,
+  name VARCHAR(50) NOT NULL,
   age INTEGER,
   CONSTRAINT pk_username PRIMARY KEY (username)
 );
@@ -48,12 +48,19 @@ INSERT INTO users
 --add moves. Possible numbers from 1-9
 INSERT INTO moves
 (position_on_board) VALUES
-(?);
+? WHERE player = ? ;
 
 --add results in the game. Possible options - player_win, cpu_win, tie
 INSERT INTO games
 (result) VALUES
 (?);
+
+--**********************
+--add player in the moves table
+INSERT INTO moves (player)
+SELECT username
+FROM users
+WHERE username = ?;
 
 ------------------------------------------
 --display all existing games
