@@ -198,36 +198,6 @@ public class SQLDatabase {
         }
     }
 
-    private static void addUser() {
-        try (Connection connection = getConnection()) {
-
-            System.out.print("Enter a username: ");
-            String username = scanner.nextLine();
-
-            System.out.print("Enter a name: ");
-            String name = scanner.nextLine();
-
-            System.out.print("Enter age: ");
-            int age = Integer.parseInt(scanner.nextLine());
-
-            try (PreparedStatement preparedStatement = connection.prepareStatement(ADD_USER)) {
-                preparedStatement.setString(1, username);
-                preparedStatement.setString(2, name);
-                preparedStatement.setInt(3, age);
-                preparedStatement.executeUpdate();
-                System.out.println("Welcome " + username + " to the game Tic-Tac-Toe");
-
-                //insert player in the moves table
-                addPlayerInTheMovesTable(username);
-            }
-
-        } catch (SQLException throwables) {
-            System.out.println("Something went wrong " + throwables.getMessage());
-            throwables.printStackTrace();
-        }
-
-
-    }
 
     private static void addMoves(int value) {
         try (Connection connection = getConnection()) {
@@ -266,6 +236,37 @@ public class SQLDatabase {
 
     }
 
+    private static void addUser() {
+        try (Connection connection = getConnection()) {
+
+            System.out.print("Enter a username: ");
+            String username = scanner.nextLine();
+
+            System.out.print("Enter a name: ");
+            String name = scanner.nextLine();
+
+            System.out.print("Enter age: ");
+            int age = Integer.parseInt(scanner.nextLine());
+
+            try (PreparedStatement preparedStatement = connection.prepareStatement(ADD_USER)) {
+                preparedStatement.setString(1, username);
+                preparedStatement.setString(2, name);
+                preparedStatement.setInt(3, age);
+                preparedStatement.executeUpdate();
+                System.out.println("Welcome " + username + " to the game Tic-Tac-Toe");
+
+                //insert player in the moves table
+                addPlayerInTheMovesTable(username);
+            }
+
+        } catch (SQLException throwables) {
+            System.out.println("Something went wrong " + throwables.getMessage());
+            throwables.printStackTrace();
+        }
+
+
+    }
+
     private static void searchForUsername() {
         try (Connection connection = getConnection()) {
 
@@ -285,7 +286,9 @@ public class SQLDatabase {
                     } else {
                         //if username doesn't exists, add new
                         System.out.println(username + " not found. Please create a new user to play");
+
                         addUser();
+
                     }
                 }
             } catch (SQLException throwables) {
@@ -298,35 +301,19 @@ public class SQLDatabase {
             throwables.printStackTrace();
         }
 
-
-
-
-
-    /*
-    try {
-        1. get a connection to database
-        2. Create statement
-        3. Execute sql statement
-        4. Process the result set
     }
-    catch (Exception exc){
-    exc.printStackTrace
-    }
-     */
-
-    }
-
-    private static String login() {
-        // 1. Ask user to enter name
-        // 2. Check if user already registered
-        // 3a. Register user
-        // 3b. Proceed with the user
-
-        searchForUsername();
-
-        return null;
-
-    }
+//
+//    private static String login() {
+//        // 1. Ask user to enter name
+//        // 2. Check if user already registered
+//        // 3a. Register user
+//        // 3b. Proceed with the user
+//
+//        searchForUsername();
+//
+//        return null;
+//
+//    }
 
     public static String checkWinner() {
 
