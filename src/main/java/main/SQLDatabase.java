@@ -124,9 +124,7 @@ public class SQLDatabase {
         do {
             // Prepare game
 
-
-
-          //  makeTurns(user);        // Actual game
+           // makeTurns(user);        // Actual game
 
             // Game ended....
             // What are we going to do next?
@@ -139,7 +137,61 @@ public class SQLDatabase {
             } while (true);
         } while (playAgain);
 
+        TicTacToe ticTacToe = new TicTacToe();
 
+        char[][] gameBoard = {{' ', '|', ' ', '|', ' '}, //0
+                {'-', '+', '-', '+', '-'},
+                {' ', '|', ' ', '|', ' '},               //2
+                {'-', '+', '-', '+', '-'},
+                {' ', '|', ' ', '|', ' '}};              //4
+
+        ticTacToe.printGameBoard(gameBoard);
+
+        while (true) {
+            Scanner scanner = new Scanner(System.in);
+            System.out.println("Enter your placement (1-9): ");
+            int playerPosition = (scanner.nextInt());
+            addMoves(playerPosition);
+
+            //while they not enter correct position, keep asking to put correct until they do
+            while (ticTacToe.playerPositions.contains(playerPosition) ||
+                    ticTacToe.cpuPositions.contains(playerPosition)) {
+                System.out.println("Position is taken! Enter a correct position");
+                playerPosition = scanner.nextInt();
+                addMoves(playerPosition);
+            }
+
+            //always check a winner and the result after each player and cpu move
+            String result = ticTacToe.checkWinner();
+            if (result.length() > 0) {
+                System.out.println(result);
+                break;
+            }
+
+            ticTacToe.placePiece(gameBoard, playerPosition, "player");
+
+            //printGameBoard(gameBoard);
+
+            result = ticTacToe.checkWinner();
+            if (result.length() > 0) {
+                System.out.println(result);
+                break;
+            }
+
+            //cpu makes move
+            //store input
+            //check if there is a winner
+            Random random = new Random();
+            int cpuPosition = random.nextInt(9) + 1;
+            while (ticTacToe.playerPositions.contains(cpuPosition) ||
+                    ticTacToe.cpuPositions.contains(cpuPosition)) {
+                cpuPosition = random.nextInt(9) + 1;
+            }
+
+            ticTacToe.placePiece(gameBoard, cpuPosition, "cpu");
+
+            ticTacToe.printGameBoard(gameBoard);
+        }
     }
 
 
