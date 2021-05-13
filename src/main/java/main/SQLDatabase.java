@@ -69,17 +69,11 @@ public class SQLDatabase {
     public static final String ADD_USER = "INSERT INTO " + TABLE_USERS + " (" + USERNAME + ", " +
             NAME + ", " + AGE + ") VALUES ( ?, ?, ?);";
 
-    //ADD PCU AS 2ND PLAYER
-    public static final String ADD_USER_PCU = "INSERT INTO " + TABLE_USERS + " (" + USERNAME + ", " +
-            NAME + ") VALUES ( ?, ?);";
 
     //ADD MOVES. POSSIBLE NUMBERS FROM 1-9
-    public static final String ADD_MOVES = "INSERT INTO " + TABLE_MOVES + " (" + POSITION_ON_BOARD + ") " +
-            "VALUES ( ?);";
+    public static final String ADD_MOVES = "INSERT INTO " + TABLE_MOVES + " (" + PLAYER + ", " + POSITION_ON_BOARD + ") " +
+            "VALUES ( ?, ?);";
 
-    //ADD RESULT IN THE GAME. POSSIBLE OPTIONS - PLAYER_WIN, CPU_WIN, TIE
-    public static final String ADD_RESULT = "INSERT INTO " + TABLE_GAMES + " (" + RESULT + ") " +
-            "VALUES ( ?);";
 
     //DISPLAY ALL EXISTING GAMES
     public static final String DISPLAY_GAMES = "SELECT * FROM " + TABLE_GAMES + ";";
@@ -92,9 +86,26 @@ public class SQLDatabase {
     public static final String CHECK_FOR_USER = "SELECT " + USERNAME + " FROM " + TABLE_USERS + " WHERE " +
             USERNAME + "=?";
 
-    //ADD PLAYER IN THE MOVES TABLE
-    public static final String ADD_PLAYER_IN_THE_MOVES_TABLE = "INSERT INTO " + TABLE_MOVES + "(" + PLAYER +
-            ") SELECT " + USERNAME + " FROM " + TABLE_USERS + " WHERE " + USERNAME + "=?";
+//    //????ADD PLAYER IN THE MOVES TABLE
+//    public static final String ADD_PLAYER_IN_THE_MOVES_TABLE = "INSERT INTO " + TABLE_MOVES + "(" + PLAYER +
+//            ") SELECT " + USERNAME + " FROM " + TABLE_USERS + " WHERE " + USERNAME + "=?";
+
+    //*****************************************
+    //ADD PLAYERS TO THE GAME IN THE START
+    private static final String ADD_PLAYERS = " INSERT INTO " + TABLE_GAMES + "(" + PLAYER_1 + ", " + PLAYER_2 + ")"
+            + " VALUES (?, ?)";
+
+    //ADD RESULT IN THE GAME. POSSIBLE OPTIONS - PLAYER_WIN, CPU_WIN, TIE
+    public static final String ADD_RESULT = "INSERT INTO " + TABLE_GAMES + " (" + RESULT + ") " +
+            "VALUES ( ?);";
+
+    //?????--add pcu as 2nd player
+    public static final String ADD_PCU_AS_PLAYER2 = "INSERT INTO " + TABLE_MOVES + "(" + PLAYER + ")" +
+            "SELECT " + USERNAME + " FROM " + TABLE_USERS + " WHERE " + USERNAME + "=?";
+
+    //add id_games into game
+    public static final String ADD_GAMES_ID = "INSERT INTO " + TABLE_MOVES + "(" + GAME + ")" +
+            " SELECT " + ID_GAMES + " FROM " + TABLE_GAMES + " WHERE " + PLAYER_1 + "=?";
 
 
     private static Scanner scanner = new Scanner(System.in);
@@ -103,7 +114,6 @@ public class SQLDatabase {
 
         try (Connection connection = getConnection()) {
             prepareDatabase(connection);
-            //  workWithConnection(connection);
         } catch (SQLException throwables) {
             System.out.println("Something went wrong " + throwables.getMessage());
             throwables.printStackTrace();
@@ -112,9 +122,8 @@ public class SQLDatabase {
         // Loop to allow different users to log in.
         while (true) {
             String username = login();
-            //playGame(username);
+            playGame();
         }
-
 
     }
 
@@ -127,99 +136,314 @@ public class SQLDatabase {
     }
 
     private static void playGame() {
-        TicTacToe ticTacToe = new TicTacToe();
+        boolean playAgain = false;
+        do {
 
-        char[][] gameBoard = {{' ', '|', ' ', '|', ' '}, //0
-                {'-', '+', '-', '+', '-'},
-                {' ', '|', ' ', '|', ' '},               //2
-                {'-', '+', '-', '+', '-'},
-                {' ', '|', ' ', '|', ' '}};              //4
+            //prepare game. add all values in the tables
 
-        ticTacToe.printGameBoard(gameBoard);
+
+            //actual game
+            makeTurns();
+
+            boolean quit = false;
+            do {
+
+                printActions();
+
+                int choice = 0;
+
+                Boolean retry = null;
+                while (retry == null) {
+                    try {
+                        String input = scanner.nextLine();
+                        choice = Integer.parseInt(input);
+                        retry = false;
+                    } catch (NumberFormatException e) {
+                        System.out.println("Invalid input! Please choose action between numbers 1-5");
+                    }
+                }
+
+                switch (choice) {
+
+                    //maybe include a case with game template, example of numbers in the table and game rules!!!!
+
+                    //!!!!!!!!!!prints display twice
+                    case 0:
+                        printActions();
+                        break;
+                    case 1:
+                        playAgain = true;
+                        makeTurns();
+                        break;
+                    case 2:
+                        System.out.println("Logging out!");
+                        quit = true;
+                        break;
+                    case 3:
+                        //listOfGames();
+                        break;
+                    case 4:
+                        //chooseGameToSeeMoves();
+                        break;
+                    case 5:
+                        System.exit(0);
+                        break;
+                    default:
+                        System.out.println("Invalid input! Please choose action between numbers 1-5");
+                        break;
+                }
+
+            } while (!quit);
+
+        } while (!playAgain);
+
+    }
+
+
+    private static void makeTurns() {
+        char[][] board = {{' ', ' ', ' '},
+                {' ', ' ', ' '},
+                {' ', ' ', ' '}};
+
+        printBoard(board);
 
         while (true) {
-            Scanner scanner = new Scanner(System.in);
-            System.out.println("Enter your placement (1-9): ");
-            int playerPosition = (scanner.nextInt());
-            addMoves(playerPosition);
-
-            //while they not enter correct position, keep asking to put correct until they do
-            while (ticTacToe.playerPositions.contains(playerPosition) ||
-                    ticTacToe.cpuPositions.contains(playerPosition)) {
-                System.out.println("Position is taken! Enter a correct position");
-                playerPosition = scanner.nextInt();
-                addMoves(playerPosition);
-            }
-
-            //always check a winner and the result after each player and cpu move
-            String result = ticTacToe.checkWinner();
-            if (result.length() > 0) {
-                System.out.println(result);
+            playerTurn(board, scanner);
+            if (isGameFinished(board)) {
                 break;
             }
+            printBoard(board);
 
-            ticTacToe.placePiece(gameBoard, playerPosition, "player");
-
-            //printGameBoard(gameBoard);
-
-            result = ticTacToe.checkWinner();
-            if (result.length() > 0) {
-                System.out.println(result);
+            computerTurn(board);
+            if (isGameFinished(board)) {
                 break;
             }
+            printBoard(board);
+        }
 
-            //cpu makes move
-            //store input
-            //check if there is a winner
-            Random random = new Random();
-            int cpuPosition = random.nextInt(9) + 1;
-            while (ticTacToe.playerPositions.contains(cpuPosition) ||
-                    ticTacToe.cpuPositions.contains(cpuPosition)) {
-                cpuPosition = random.nextInt(9) + 1;
+    }
+
+    public static void printActions() {
+        System.out.println("\nPress");
+        System.out.println("\t 0 - Print actions");
+        System.out.println("\t 1 - Play again");
+        System.out.println("\t 2 - Log out");
+        System.out.println("\t 3 - View list of games");
+        System.out.println("\t 4 - Display moves of the game");
+        System.out.println("\t 5 - Quit the application");
+    }
+
+    private static boolean isGameFinished(char[][] board) {
+
+        if (hasContestantWon(board, 'X')) {
+            printBoard(board);
+            System.out.println("Player wins!");
+            return true;
+        }
+
+        if (hasContestantWon(board, 'O')) {
+            printBoard(board);
+            System.out.println("Computer wins!");
+            return true;
+        }
+
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[i].length; j++) {
+                if (board[i][j] == ' ') {
+                    return false;
+                }
             }
+        }
+        printBoard(board);
+        System.out.println("The game ended in a tie!");
+        return true;
+    }
 
-            ticTacToe.placePiece(gameBoard, cpuPosition, "cpu");
 
-            ticTacToe.printGameBoard(gameBoard);
+    private static boolean hasContestantWon(char[][] board, char symbol) {
+        if ((board[0][0] == symbol && board[0][1] == symbol && board[0][2] == symbol) ||
+                (board[1][0] == symbol && board[1][1] == symbol && board[1][2] == symbol) ||
+                (board[2][0] == symbol && board[2][1] == symbol && board[2][2] == symbol) ||
 
+                (board[0][0] == symbol && board[1][0] == symbol && board[2][0] == symbol) ||
+                (board[0][1] == symbol && board[1][1] == symbol && board[2][1] == symbol) ||
+                (board[0][2] == symbol && board[1][2] == symbol && board[2][2] == symbol) ||
+
+                (board[0][0] == symbol && board[1][1] == symbol && board[2][2] == symbol) ||
+                (board[0][2] == symbol && board[1][1] == symbol && board[2][0] == symbol)) {
+            return true;
+        }
+        return false;
+    }
+
+
+    private static void computerTurn(char[][] board) {
+        Random rand = new Random();
+        int computerMove;
+        while (true) {
+            computerMove = rand.nextInt(9) + 1;
+            if (isValidMove(board, Integer.toString(computerMove))) {
+                break;
+            }
+        }
+        System.out.println("Computer chose " + computerMove);
+        placeMove(board, Integer.toString(computerMove), 'O');
+    }
+
+
+    private static boolean isValidMove(char[][] board, String position) {
+        //put numbers in this place to see numbers in table
+
+        switch (position) {
+            case "1":
+                return (board[0][0] == ' ');
+            case "2":
+                return (board[0][1] == ' ');
+            case "3":
+                return (board[0][2] == ' ');
+            case "4":
+                return (board[1][0] == ' ');
+            case "5":
+                return (board[1][1] == ' ');
+            case "6":
+                return (board[1][2] == ' ');
+            case "7":
+                return (board[2][0] == ' ');
+            case "8":
+                return (board[2][1] == ' ');
+            case "9":
+                return (board[2][2] == ' ');
+            default:
+                return false;
+        }
+    }
+
+    private static void playerTurn(char[][] board, Scanner scanner) {
+        String userInput;
+        while (true) {
+            System.out.println("Where would you like to play? (1-9)");
+            userInput = scanner.nextLine();
+            if (isValidMove(board, userInput)) {
+                break;
+            } else {
+                System.out.println(userInput + " is not a valid move.");
+            }
+        }
+        placeMove(board, userInput, 'X');
+    }
+
+
+    private static void placeMove(char[][] board, String position, char symbol) {
+        switch (position) {
+            case "1":
+                board[0][0] = symbol;
+                break;
+            case "2":
+                board[0][1] = symbol;
+                break;
+            case "3":
+                board[0][2] = symbol;
+                break;
+            case "4":
+                board[1][0] = symbol;
+                break;
+            case "5":
+                board[1][1] = symbol;
+                break;
+            case "6":
+                board[1][2] = symbol;
+                break;
+            case "7":
+                board[2][0] = symbol;
+                break;
+            case "8":
+                board[2][1] = symbol;
+                break;
+            case "9":
+                board[2][2] = symbol;
+                break;
+            default:
+                System.out.println(":(");
         }
     }
 
 
-    private static void displayAllGames(Connection connection) throws SQLException {
-        try (Statement statement = connection.createStatement()) {
-            try (ResultSet resultSet = statement.executeQuery(DISPLAY_GAMES)) {
-//                printAllColumns(resultSet);
-            }
-        }
+    private static void printBoard(char[][] board) {
+        System.out.println(board[0][0] + "|" + board[0][1] + "|" + board[0][2]);
+        System.out.println("-+-+-");
+        System.out.println(board[1][0] + "|" + board[1][1] + "|" + board[1][2]);
+        System.out.println("-+-+-");
+        System.out.println(board[2][0] + "|" + board[2][1] + "|" + board[2][2]);
     }
 
+    //**********************************************
 
-    private static void addMoves(int value) {
+    //insert into game player 1, player 2
+    private static void addPlayers(String player1, String player2) {
         try (Connection connection = getConnection()) {
-            try (PreparedStatement preparedStatement = connection.prepareStatement(ADD_MOVES)) {
-                preparedStatement.setInt(1, value);
-                preparedStatement.executeUpdate();
+            try (PreparedStatement statement = connection.prepareStatement(ADD_PLAYERS)) {
+                statement.setString(1, player1);
+                statement.setString(2, player2);
+                statement.executeUpdate();
             }
+
         } catch (SQLException throwables) {
             System.out.println("Something went wrong " + throwables.getMessage());
             throwables.printStackTrace();
         }
     }
 
-    private static void addPlayerInTheMovesTable(String username) {
+
+    private static String addPcuAsPlayer2() {
+        String user = "cpu";
         try (Connection connection = getConnection()) {
-            try (PreparedStatement preparedStatement = connection.prepareStatement(ADD_PLAYER_IN_THE_MOVES_TABLE)) {
-                preparedStatement.setString(1, username);
+            try (PreparedStatement preparedStatement = connection.prepareStatement(ADD_PCU_AS_PLAYER2)) {
+                String pcu;
+                preparedStatement.setString(1, user);
                 preparedStatement.executeUpdate();
             }
         } catch (SQLException throwables) {
             System.out.println("Something went wrong " + throwables.getMessage());
             throwables.printStackTrace();
         }
+
+        return user;
     }
 
-    private static void addResult(String result) {
+    //    public static final String ADD_GAMES_NR = "INSERT INTO " + TABLE_MOVES + "(" + GAME + ")" +
+    //            "SELECT " + ID_GAMES + " FROM " + TABLE_GAMES + " WHERE " + PLAYER_1 + "=?";
+
+    // INSERT INTO MOVES (GAME)
+    //SELECT ID_GAMES FROM GAMES
+    //WHERE PLAYER1=?;
+//    private static int addGamesId(String username) {
+//
+//        int id = 0;
+//        try (Connection connection = getConnection()) {
+//            try (PreparedStatement preparedStatement = connection.prepareStatement(ADD_GAMES_ID)) {
+//                preparedStatement.setString(1, username);
+//                //preparedStatement.executeUpdate();
+//
+//                try (ResultSet rs = preparedStatement.executeQuery()) {
+//                    while (rs.next()) {
+//                        id = rs.getInt(ID_GAMES);
+//                        System.out.println(id + "add_games_id");
+//                    }
+//                }
+//            } catch (SQLException throwables) {
+//                System.out.println("Something went wrong " + throwables.getMessage());
+//                throwables.printStackTrace();
+//
+//            }
+//        } catch (SQLException throwables) {
+//            System.out.println("Something went wrong " + throwables.getMessage());
+//            throwables.printStackTrace();
+//        }
+//        return id;
+//    }
+
+
+    private static String addResult(String result) {
         try (Connection connection = getConnection()) {
             try (PreparedStatement preparedStatement = connection.prepareStatement(ADD_RESULT)) {
                 preparedStatement.setString(1, result);
@@ -230,7 +454,44 @@ public class SQLDatabase {
             throwables.printStackTrace();
         }
 
+        return result;
     }
+
+    private static void displayAllGames(Connection connection) throws SQLException {
+        try (Statement statement = connection.createStatement()) {
+            try (ResultSet resultSet = statement.executeQuery(DISPLAY_GAMES)) {
+//                printAllColumns(resultSet);
+            }
+        }
+    }
+
+
+    private static void addMoves(String player, int position) {
+        try (Connection connection = getConnection()) {
+            try (PreparedStatement preparedStatement = connection.prepareStatement(ADD_MOVES)) {
+                preparedStatement.setString(1, player);
+//                preparedStatement.setInt(2, game);
+                preparedStatement.setInt(2, position);
+                preparedStatement.executeUpdate();
+            }
+        } catch (SQLException throwables) {
+            System.out.println("Something went wrong " + throwables.getMessage());
+            throwables.printStackTrace();
+        }
+    }
+//
+//    private static void addPlayerInTheMovesTable(String username) {
+//        try (Connection connection = getConnection()) {
+//            try (PreparedStatement preparedStatement = connection.prepareStatement(ADD_PLAYER_IN_THE_MOVES_TABLE)) {
+//                preparedStatement.setString(1, username);
+//                preparedStatement.executeUpdate();
+//            }
+//        } catch (SQLException throwables) {
+//            System.out.println("Something went wrong " + throwables.getMessage());
+//            throwables.printStackTrace();
+//        }
+//    }
+
 
     private static void addUser() {
         try (Connection connection = getConnection()) {
@@ -251,8 +512,6 @@ public class SQLDatabase {
                 preparedStatement.executeUpdate();
                 System.out.println("Welcome " + username + " to the game Tic-Tac-Toe");
 
-                //insert player in the moves table
-                addPlayerInTheMovesTable(username);
             }
 
         } catch (SQLException throwables) {
@@ -264,10 +523,11 @@ public class SQLDatabase {
     }
 
     private static String login() {
+        String username = null;
         try (Connection connection = getConnection()) {
 
             System.out.print("To start playing a game, enter a username: ");
-            String username = scanner.nextLine();
+            username = scanner.nextLine();
             //check if user exists
             try (PreparedStatement preparedStatement = connection.prepareStatement(CHECK_FOR_USER)) {
                 preparedStatement.setString(1, username);
@@ -275,9 +535,6 @@ public class SQLDatabase {
                     if (rs.next()) {
                         username = rs.getString(USERNAME);
                         System.out.println("Welcome " + username + " to the game Tic-Tac-Toe");
-
-                        //insert player in the moves table
-                        addPlayerInTheMovesTable(username);
 
                     } else {
                         //if username doesn't exists, add new
@@ -297,112 +554,9 @@ public class SQLDatabase {
             throwables.printStackTrace();
         }
 
-        return null;
+        return username;
     }
-//
-//    private static String login() {
-//        // 1. Ask user to enter name
-//        // 2. Check if user already registered
-//        // 3a. Register user
-//        // 3b. Proceed with the user
-//
-//        searchForUsername();
-//
-//        return null;
-//
-//    }
-
-    public static String checkWinner() {
-
-        List topRow = Arrays.asList(1, 2, 3);
-        List middleRow = Arrays.asList(4, 5, 6);
-        List bottomRow = Arrays.asList(7, 8, 9);
-
-        List leftColumn = Arrays.asList(1, 4, 7);
-        List middleColumn = Arrays.asList(2, 5, 8);
-        List rightColumn = Arrays.asList(3, 6, 9);
-
-        List cross1 = Arrays.asList(1, 5, 9);
-        List cross2 = Arrays.asList(7, 5, 3);
-
-        List<List> winning = new ArrayList<List>();
-
-        winning.add(topRow);
-        winning.add(middleRow);
-        winning.add(bottomRow);
-
-        winning.add(leftColumn);
-        winning.add(middleColumn);
-        winning.add(rightColumn);
-
-        winning.add(cross1);
-        winning.add(cross2);
-
-        for (List lists : winning) {
-            if (TicTacToe.playerPositions.containsAll(lists)) {
-                addResult("PLAYER_WINS");
-                return "Congratulations you won!";
-            } else if (TicTacToe.cpuPositions.containsAll(lists)) {
-                addResult("CPU_WINS");
-                return "CPU wins!";
-            } else if (TicTacToe.playerPositions.size() + TicTacToe.cpuPositions.size() == 9) {
-                addResult("TIE");
-                return "TIE!";
-            }
-        }
-
-        //bug
-        // If you place a winning piece as the last move -
-        // it will still register as a Tie,
-        // since the last "else if" in the for loop
-        // Need to put this check as a separate if statement outside the for loop and it solves it.
-
-        //didn't print the game board (put the last number) after print CAT
-
-        return "";
-    }
-
-
-//        //in the end of the game, print options
-//        tttEndOfGame tttEndOfGame = new tttEndOfGame();
-//
-//        boolean quit = false;
-//        while (!quit) {
-//
-//
-//            tttEndOfGame.printActions();
-//
-//            int choice = 0;
-//            System.out.println("Please choose next action:");
-//            choice = scanner.nextInt();
-//            scanner.nextLine();
-//
-//            switch (choice) {
-//                case 0:
-//                    tttEndOfGame.printActions();
-//                    break;
-//                case 1:
-//                    System.out.println("The game starts from the start! New round!");
-//                    playAGame();
-//                    break;
-//                case 2:
-//                    System.out.println("Logging out!");
-//                    searchForUsername();
-//                    break;
-//                case 3:
-//                    //   listOfGames();
-//                case 4:
-//                    //   chooseGameToSeeMoves();
-//                    break;
-//                case 5:
-//                   // quit = true;
-//                    break;
-//                default:
-//                    System.out.println("Invalid input! Please choose again");
-//                    tttEndOfGame.printActions();
-//                    break;
-//            }
-//        }
 
 }
+    
 

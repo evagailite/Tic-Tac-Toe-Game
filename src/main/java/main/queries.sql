@@ -1,4 +1,5 @@
 
+--DONE!!!
 --that will store information about each user. (e.g. one row - one user)
 CREATE TABLE IF NOT EXISTS users (
   username VARCHAR(50) NOT NULL,
@@ -22,7 +23,6 @@ CREATE TABLE IF NOT EXISTS games (
   -- Meaning that result will be either a valid user from users table or NULL, when there is a tie.
 );
 
-
 --that will store information about moves for all the games. (e.g. one row - one move).
 --in pcu case player will be null
 CREATE TABLE IF NOT EXISTS moves (
@@ -40,11 +40,6 @@ INSERT INTO users
 (username, name, age) VALUES
 (?, ?, ?);
 
---add pcu as a player
-INSERT INTO users
-(username, name) VALUES
-"pcu", "pcu";
-
 --add moves. Possible numbers from 1-9
 INSERT INTO moves
 (position_on_board) VALUES
@@ -55,6 +50,11 @@ INSERT INTO games
 (result) VALUES
 (?);
 
+--insert into game player 1, player 2
+INSERT INTO games
+(player1, player2) VALUES
+(?, ?);
+
 --**********************
 --add player in the moves table
 INSERT INTO moves (player)
@@ -62,6 +62,12 @@ SELECT username
 FROM users
 WHERE username = ?;
 
+
+--add pcu as 2nd player
+INSERT INTO games (player2)
+SELECT username
+FROM users
+WHERE username = ?
 ------------------------------------------
 --display all existing games
 SELECT * FROM games;
