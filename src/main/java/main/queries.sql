@@ -42,39 +42,16 @@ INSERT INTO games
 
 --insert foreign keys..table games
 INSERT INTO GAMES (PLAYER1, PLAYER2, RESULT)
-VALUES ((SELECT USERNAME FROM USERS  WHERE USERNAME = 'Eva' ),
-(SELECT USERNAME FROM USERS  WHERE USERNAME = 'CPU'), 'PCU_WINS');
-
---insert foreign keys..table games
-INSERT INTO GAMES (PLAYER1, PLAYER2, RESULT)
 VALUES ((SELECT USERNAME FROM USERS WHERE USERNAME = ? ),
-(SELECT USERNAME FROM USERS WHERE USERNAME = ?), (INSERT INTO games (result) VALUES 'TIE'));
+(SELECT USERNAME FROM USERS WHERE USERNAME = ?), ?);
 
 -------------------------------------------------------------
-INSERT INTO MOVES (player, game, position_on_board)
-VALUES ((SELECT USERNAME FROM USERS WHERE USERNAME = 'Eva' ),
-(SELECT id_games FROM games WHERE player1 = 'Eva'), 2);
 
 INSERT INTO MOVES (player, game, position_on_board)
 VALUES ((SELECT USERNAME FROM USERS WHERE USERNAME = ? ),
 (SELECT id_games FROM games WHERE player1 = ?), ?);
 
-
---query fro win_player, win_pcu, tie
-INSERT INTO games (result) VALUES 'PCU_WINS';
-INSERT INTO games (result) VALUES 'PLAYER_WINS';
-INSERT INTO games (result) VALUES 'TIE';
-
 -------------------------------------------
---add data about user
-INSERT INTO users
-(username, name, age) VALUES
-(?, ?, ?);
-
---add player, game_id, position_on_board
-INSERT INTO moves
-(player, game, position_on_board) VALUES
-(?, ?, ?);
 
 --**********************
 --add player in the moves table

@@ -72,10 +72,6 @@ public class SQLDatabase {
     public static final String ADD_USER = "INSERT INTO " + TABLE_USERS + " (" + USERNAME + ", " +
             NAME + ", " + AGE + ") VALUES ( ?, ?, ?);";
 
-    //ADD MOVES. POSSIBLE NUMBERS FROM 1-9
-    public static final String ADD_MOVES = "INSERT INTO " + TABLE_MOVES +
-            " (" + PLAYER + ", " + GAME + ", " + POSITION_ON_BOARD + ") " + "VALUES ( ?, ?, ?);";
-
     //ADD RESULT IN THE GAME. POSSIBLE OPTIONS - PLAYER_WIN, CPU_WIN, TIE
     public static final String ADD_RESULT = "INSERT INTO " + TABLE_GAMES + " (" + RESULT + ") " +
             "VALUES ( ?);";
@@ -96,6 +92,14 @@ public class SQLDatabase {
             " VALUES (( SELECT " + USERNAME + " FROM " + TABLE_USERS + " WHERE " +
             USERNAME + " =?), ( SELECT " + USERNAME + " FROM " + TABLE_USERS +
             " WHERE " + USERNAME + " =?), ?);";
+
+    //INSERT INTO MOVES (player, game, position_on_board)
+    //VALUES ((SELECT USERNAME FROM USERS WHERE USERNAME = ? ),
+    //(SELECT id_games FROM games WHERE player1 = ?), ?);
+
+    public static final String ADD_MOVES = "INSERT INTO " + TABLE_MOVES +
+            " (" + PLAYER + ", " + GAME + ", " + POSITION_ON_BOARD + ") " + "VALUES ( ?, (SELECT " + ID_GAMES + " FROM " + TABLE_GAMES +
+            " WHERE " + PLAYER_1 + " =?),?);";
 
     private static Scanner scanner = new Scanner(System.in);
 
@@ -130,14 +134,15 @@ public class SQLDatabase {
         boolean playAgain = false;
         do {
 
-            //insert player as user + game_id + position_on_board
-            // addMoves(username, );
-
             //actual game
             makeTurns();
 
             String end = game.getResult();
             addGameInformation(username, username, end);
+
+            //insert player as user + game_id + position_on_board
+            int pos = game.getMoves();
+            addMoves(username, username, pos);
 
             boolean quit = false;
             do {
@@ -292,6 +297,7 @@ public class SQLDatabase {
             }
         }
         System.out.println("Computer chose " + computerMove);
+        game.setMoves(computerMove);
         placeMove(board, Integer.toString(computerMove), 'O');
     }
 
@@ -329,6 +335,7 @@ public class SQLDatabase {
             System.out.println("Where would you like to play? (1-9)");
             userInput = scanner.nextLine();
             if (isValidMove(board, userInput)) {
+                game.setMoves(Integer.parseInt(userInput));
                 break;
             } else {
                 System.out.println(userInput + " is not a valid move.");
@@ -381,17 +388,15 @@ public class SQLDatabase {
         System.out.println(board[2][0] + "|" + board[2][1] + "|" + board[2][2]);
     }
 
-    //**********************************************
+    //INSERT INTO MOVES (player, game, position_on_board)
+    //VALUES ((SELECT USERNAME FROM USERS WHERE USERNAME = ? ),
+    //(SELECT id_games FROM games WHERE player1 = ?), ?);
 
-
-    //    ADD_MOVES = "INSERT INTO " + TABLE_MOVES +
-    //     " (" + PLAYER + ", " + GAME + ", " + POSITION_ON_BOARD + ") " + "VALUES ( ?, ?, ?);";
-
-    private static void addMoves(String player, int game, int position) {
+    private static void addMoves(String player, String player1GameId, int position) {
         try (Connection connection = getConnection()) {
             try (PreparedStatement preparedStatement = connection.prepareStatement(ADD_MOVES)) {
                 preparedStatement.setString(1, player);
-                preparedStatement.setInt(2, game);
+                preparedStatement.setString(2, player1GameId);
                 preparedStatement.setInt(3, position);
                 preparedStatement.executeUpdate();
             }
