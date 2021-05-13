@@ -34,26 +34,47 @@ CREATE TABLE IF NOT EXISTS moves (
   foreign key (game) REFERENCES games(id_games)
 );
 
+
+--add results in the game. Possible options - player_win, cpu_win, tie
+INSERT INTO games
+(player1, player2, result) VALUES
+(?, ?, ?);
+
+--insert foreign keys..table games
+INSERT INTO GAMES (PLAYER1, PLAYER2, RESULT)
+VALUES ((SELECT USERNAME FROM USERS  WHERE USERNAME = 'Eva' ),
+(SELECT USERNAME FROM USERS  WHERE USERNAME = 'CPU'), 'PCU_WINS');
+
+--insert foreign keys..table games
+INSERT INTO GAMES (PLAYER1, PLAYER2, RESULT)
+VALUES ((SELECT USERNAME FROM USERS WHERE USERNAME = ? ),
+(SELECT USERNAME FROM USERS WHERE USERNAME = ?), (INSERT INTO games (result) VALUES 'TIE'));
+
+-------------------------------------------------------------
+INSERT INTO MOVES (player, game, position_on_board)
+VALUES ((SELECT USERNAME FROM USERS WHERE USERNAME = 'Eva' ),
+(SELECT id_games FROM games WHERE player1 = 'Eva'), 2);
+
+INSERT INTO MOVES (player, game, position_on_board)
+VALUES ((SELECT USERNAME FROM USERS WHERE USERNAME = ? ),
+(SELECT id_games FROM games WHERE player1 = ?), ?);
+
+
+--query fro win_player, win_pcu, tie
+INSERT INTO games (result) VALUES 'PCU_WINS';
+INSERT INTO games (result) VALUES 'PLAYER_WINS';
+INSERT INTO games (result) VALUES 'TIE';
+
 -------------------------------------------
 --add data about user
 INSERT INTO users
 (username, name, age) VALUES
 (?, ?, ?);
 
---add moves. Possible numbers from 1-9
+--add player, game_id, position_on_board
 INSERT INTO moves
-(position_on_board) VALUES
-? WHERE player = ? ;
-
---add results in the game. Possible options - player_win, cpu_win, tie
-INSERT INTO games
-(result) VALUES
-(?);
-
---insert into game player 1, player 2
-INSERT INTO games
-(player1, player2) VALUES
-(?, ?);
+(player, game, position_on_board) VALUES
+(?, ?, ?);
 
 --**********************
 --add player in the moves table
@@ -61,7 +82,6 @@ INSERT INTO moves (player)
 SELECT username
 FROM users
 WHERE username = ?;
-
 
 --add pcu as 2nd player
 INSERT INTO games (player2)
@@ -77,7 +97,7 @@ SELECT player, position_on_board
 FROM moves
 WHERE game = ?;
 
---  search for entered username
+--search for entered username
 SELECT username
 FROM users
 WHERE username = ?;
