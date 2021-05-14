@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS moves (
   id_moves INTEGER AUTO_INCREMENT PRIMARY KEY,
   player VARCHAR(50),
   game INTEGER,
-  position_on_board INTEGER,
+  position_on_board VARCHAR(120),
   foreign key (player) REFERENCES users(username),
   foreign key (game) REFERENCES games(id_games)
 );

@@ -5,11 +5,6 @@ public class Game {
     private String result;
     private int moves;
 
-//    public Game() {
-//        this.result = result;
-//        this.moves = moves;
-//    }
-
     public String getResult() {
         return this.result;
     }

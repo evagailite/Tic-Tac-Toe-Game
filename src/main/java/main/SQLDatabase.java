@@ -79,6 +79,8 @@ public class SQLDatabase {
     //DISPLAY ALL EXISTING GAMES
     public static final String DISPLAY_GAMES = "SELECT * FROM " + TABLE_GAMES + ";";
 
+    public static final String DISPLAY_USERS = "SELECT * FROM " + TABLE_USERS + ";";
+
     //DISPLAY MOVES FOR CERTAIN GAME
     public static final String DISPLAY_GAME_MOVES = "SELECT  " + PLAYER + ", " + POSITION_ON_BOARD +
             " FROM " + TABLE_MOVES + " WHERE " + GAME + "=?";
@@ -101,6 +103,9 @@ public class SQLDatabase {
             " (" + PLAYER + ", " + GAME + ", " + POSITION_ON_BOARD + ") " + "VALUES ( ?, (SELECT " + ID_GAMES + " FROM " + TABLE_GAMES +
             " WHERE " + PLAYER_1 + " =?),?);";
 
+    public static final String ADD_MOVES_TEST = "INSERT INTO " + TABLE_MOVES +
+            " (" + POSITION_ON_BOARD + ") " + "VALUES (?);";
+
     private static Scanner scanner = new Scanner(System.in);
 
     private static Game game = new Game();
@@ -114,6 +119,15 @@ public class SQLDatabase {
             throwables.printStackTrace();
         }
 
+        System.out.println("*********************************");
+        System.out.println("*                               *");
+        System.out.println("*            WELCOME            *");
+        System.out.println("*          TO THE GAME          *");
+        System.out.println("*          TIC-TAC-TOE          *");
+        System.out.println("*                               *");
+        System.out.println("*********************************");
+
+        System.out.println(" ");
         // Loop to allow different users to log in.
         while (true) {
             String username = login();
@@ -131,6 +145,18 @@ public class SQLDatabase {
     }
 
     private static void playGame(String username) {
+
+        System.out.println(" ");
+        System.out.println("The game is played on the 3X3 grid.");
+        System.out.println("You have an X mark on the board game.");
+        System.out.println("You will play against the Computer.");
+        System.out.println("The Computer has a mark O.");
+        System.out.println("Possible moves are shown on the game board below.");
+        System.out.println("Please take a look and start playing! Good luck!");
+        System.out.println(" ");
+
+        // boardExample();
+
         boolean playAgain = false;
         do {
 
@@ -141,8 +167,9 @@ public class SQLDatabase {
             addGameInformation(username, username, end);
 
             //insert player as user + game_id + position_on_board
+            //*****????*****
             int pos = game.getMoves();
-            addMoves(username, username, pos);
+            addMoves(pos);
 
             boolean quit = false;
             do {
@@ -164,11 +191,7 @@ public class SQLDatabase {
 
                 switch (choice) {
 
-                    //maybe include a case with game template, example of numbers in the table and game rules!!!!
-
-                    //!!!!!!!!!!prints display twice
                     case 0:
-                        printActions();
                         break;
                     case 1:
                         playAgain = true;
@@ -181,12 +204,13 @@ public class SQLDatabase {
                         quit = true;
                         break;
                     case 3:
-                        //listOfGames();
+                        printColumnsGameTable();
                         break;
                     case 4:
                         //chooseGameToSeeMoves();
                         break;
                     case 5:
+                        System.out.println("The application has stopped working!");
                         System.exit(0);
                         break;
                     default:
@@ -202,14 +226,27 @@ public class SQLDatabase {
     }
 
 
+    private static void boardExample() {
+        char[][] example = {{'1', '2', '3'},
+                {'4', '5', '6'},
+                {'7', '8', '9'}};
+
+        printBoard(example);
+    }
+
     private static void makeTurns() {
+
+        boardExample();
+
         char[][] board = {{' ', ' ', ' '},
                 {' ', ' ', ' '},
                 {' ', ' ', ' '}};
 
-        printBoard(board);
+        // printBoard(board);
 
         while (true) {
+            //  printBoard(board);
+
             playerTurn(board, scanner);
             if (isGameFinished(board)) {
                 break;
@@ -239,7 +276,8 @@ public class SQLDatabase {
 
         if (hasContestantWon(board, 'X')) {
             printBoard(board);
-            System.out.println("Player wins!");
+            System.out.println(" ");
+            System.out.println("You won! Congratulations!");
             String result = "PLAYER_WIN";
             game.setResult(result);
             return true;
@@ -247,10 +285,10 @@ public class SQLDatabase {
 
         if (hasContestantWon(board, 'O')) {
             printBoard(board);
+            System.out.println(" ");
             System.out.println("Computer wins!");
             String result = "CPU_WIN";
             game.setResult(result);
-            System.out.println(result);
             return true;
         }
 
@@ -262,10 +300,10 @@ public class SQLDatabase {
             }
         }
         printBoard(board);
+        System.out.println(" ");
         System.out.println("The game ended in a tie!");
         String result = "TIE";
         game.setResult(result);
-        System.out.println(result);
         return true;
     }
 
@@ -332,6 +370,7 @@ public class SQLDatabase {
     private static void playerTurn(char[][] board, Scanner scanner) {
         String userInput;
         while (true) {
+            System.out.println(" ");
             System.out.println("Where would you like to play? (1-9)");
             userInput = scanner.nextLine();
             if (isValidMove(board, userInput)) {
@@ -388,16 +427,20 @@ public class SQLDatabase {
         System.out.println(board[2][0] + "|" + board[2][1] + "|" + board[2][2]);
     }
 
+    /*
+    ERROR - SCALAR SUBQUERY
+     */
+
     //INSERT INTO MOVES (player, game, position_on_board)
     //VALUES ((SELECT USERNAME FROM USERS WHERE USERNAME = ? ),
     //(SELECT id_games FROM games WHERE player1 = ?), ?);
 
-    private static void addMoves(String player, String player1GameId, int position) {
+    private static void addMoves(int position) {
         try (Connection connection = getConnection()) {
-            try (PreparedStatement preparedStatement = connection.prepareStatement(ADD_MOVES)) {
-                preparedStatement.setString(1, player);
-                preparedStatement.setString(2, player1GameId);
-                preparedStatement.setInt(3, position);
+            try (PreparedStatement preparedStatement = connection.prepareStatement(ADD_MOVES_TEST)) {
+//                preparedStatement.setString(1, player);
+//                preparedStatement.setString(2, player1GameId);
+                preparedStatement.setInt(1, position);
                 preparedStatement.executeUpdate();
             }
         } catch (SQLException throwables) {
@@ -444,7 +487,8 @@ public class SQLDatabase {
                 preparedStatement.setString(2, name);
                 preparedStatement.setInt(3, age);
                 preparedStatement.executeUpdate();
-                System.out.println("Welcome " + username + " to the game Tic-Tac-Toe");
+                System.out.println(" ");
+                System.out.println("Welcome " + username + "!");
 
             }
 
@@ -467,7 +511,8 @@ public class SQLDatabase {
                 try (ResultSet rs = preparedStatement.executeQuery()) {
                     if (rs.next()) {
                         username = rs.getString(USERNAME);
-                        System.out.println("Welcome " + username + " to the game Tic-Tac-Toe");
+                        System.out.println(" ");
+                        System.out.println("Welcome " + username + "!");
 
                     } else {
                         //if username doesn't exists, add new
@@ -499,6 +544,66 @@ public class SQLDatabase {
     }
 
 
+    private static void printColumnsGameTable() {
+
+        try (Connection connection = getConnection()) {
+            try (Statement statement = connection.createStatement()) {
+                statement.executeQuery(DISPLAY_GAMES);
+                try (ResultSet rs = statement.executeQuery(DISPLAY_GAMES)) {
+                    ResultSetMetaData metaData = rs.getMetaData();
+                    int columnCount = metaData.getColumnCount();
+                    for (int i = 1; i <= columnCount; i++) {
+                        System.out.printf("%-10s", metaData.getColumnName(i));
+                    }
+                    System.out.println("");
+                    while (rs.next()) {
+                        for (int i = 1; i <= columnCount; i++) {
+                            System.out.printf("%-10s", rs.getString(i));
+                        }
+                        System.out.println();
+                    }
+
+                }
+
+            }
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+
+    }
+
+
+    private static void printColumnsUsersTable() {
+
+        try (Connection connection = getConnection()) {
+            try (Statement statement = connection.createStatement()) {
+                statement.executeQuery(DISPLAY_USERS);
+                try (ResultSet rs = statement.executeQuery(DISPLAY_USERS)) {
+                    ResultSetMetaData metaData = rs.getMetaData();
+                    int columnCount = metaData.getColumnCount();
+                    for (int i = 1; i <= columnCount; i++) {
+                        System.out.printf("%-10s", metaData.getColumnName(i));
+                    }
+                    System.out.println("");
+                    while (rs.next()) {
+                        for (int i = 1; i <= columnCount; i++) {
+                            System.out.printf("%-10s", rs.getString(i));
+                        }
+                        System.out.println();
+                    }
+
+                }
+
+            }
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+
+    }
 }
-    
+
 
