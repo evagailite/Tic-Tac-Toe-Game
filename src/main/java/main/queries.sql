@@ -29,11 +29,14 @@ CREATE TABLE IF NOT EXISTS moves (
   id_moves INTEGER AUTO_INCREMENT PRIMARY KEY,
   player VARCHAR(50),
   game INTEGER,
-  position_on_board VARCHAR(120),
+  position_on_board INTEGER,
   foreign key (player) REFERENCES users(username),
   foreign key (game) REFERENCES games(id_games)
 );
 
+INSERT INTO users
+(username, name, age) VALUES
+(?, ?, ?);
 
 --add results in the game. Possible options - player_win, cpu_win, tie
 INSERT INTO games
@@ -53,7 +56,6 @@ VALUES ((SELECT USERNAME FROM USERS WHERE USERNAME = ? ),
 
 -------------------------------------------
 
---**********************
 --add player in the moves table
 INSERT INTO moves (player)
 SELECT username

@@ -106,8 +106,8 @@ public class SQLDatabase {
     public static final String ADD_MOVES_TEST = "INSERT INTO " + TABLE_MOVES +
             " (" + POSITION_ON_BOARD + ") " + "VALUES (?);";
 
-    private static Scanner scanner = new Scanner(System.in);
 
+    private static Scanner scanner = new Scanner(System.in);
     private static Game game = new Game();
 
     public static void main(String[] args) {
@@ -145,7 +145,6 @@ public class SQLDatabase {
     }
 
     private static void playGame(String username) {
-
         System.out.println(" ");
         System.out.println("The game is played on the 3X3 grid.");
         System.out.println("You have an X mark on the board game.");
@@ -155,14 +154,9 @@ public class SQLDatabase {
         System.out.println("Please take a look and start playing! Good luck!");
         System.out.println(" ");
 
-        // boardExample();
-
         boolean playAgain = false;
         do {
-
-            //actual game
-            makeTurns();
-
+            makeTurns();//actual game
             String end = game.getResult();
             addGameInformation(username, username, end);
 
@@ -173,9 +167,7 @@ public class SQLDatabase {
 
             boolean quit = false;
             do {
-
                 printActions();
-
                 int choice = 0;
 
                 Boolean retry = null;
@@ -188,9 +180,9 @@ public class SQLDatabase {
                         System.out.println("Invalid input! Please choose action between numbers 1-5");
                     }
                 }
-
+//List all moves of this user game.
+//show all existing games first then user can select one game to see all moves.
                 switch (choice) {
-
                     case 0:
                         break;
                     case 1:
@@ -202,9 +194,10 @@ public class SQLDatabase {
                     case 2:
                         System.out.println("Logging out!");
                         quit = true;
+                        playAgain = true;
                         break;
                     case 3:
-                        printColumnsGameTable();
+                        displayAllGames();
                         break;
                     case 4:
                         //chooseGameToSeeMoves();
@@ -217,12 +210,8 @@ public class SQLDatabase {
                         System.out.println("Invalid input! Please choose action between numbers 1-5");
                         break;
                 }
-
             } while (!quit);
-
         } while (!playAgain);
-
-
     }
 
 
@@ -230,23 +219,16 @@ public class SQLDatabase {
         char[][] example = {{'1', '2', '3'},
                 {'4', '5', '6'},
                 {'7', '8', '9'}};
-
         printBoard(example);
     }
 
     private static void makeTurns() {
-
         boardExample();
-
         char[][] board = {{' ', ' ', ' '},
                 {' ', ' ', ' '},
                 {' ', ' ', ' '}};
 
-        // printBoard(board);
-
         while (true) {
-            //  printBoard(board);
-
             playerTurn(board, scanner);
             if (isGameFinished(board)) {
                 break;
@@ -273,7 +255,6 @@ public class SQLDatabase {
     }
 
     private static boolean isGameFinished(char[][] board) {
-
         if (hasContestantWon(board, 'X')) {
             printBoard(board);
             System.out.println(" ");
@@ -341,8 +322,6 @@ public class SQLDatabase {
 
 
     private static boolean isValidMove(char[][] board, String position) {
-        //put numbers in this place to see numbers in table
-
         switch (position) {
             case "1":
                 return (board[0][0] == ' ');
@@ -374,6 +353,7 @@ public class SQLDatabase {
             System.out.println("Where would you like to play? (1-9)");
             userInput = scanner.nextLine();
             if (isValidMove(board, userInput)) {
+                //have to store in the array
                 game.setMoves(Integer.parseInt(userInput));
                 break;
             } else {
@@ -475,10 +455,8 @@ public class SQLDatabase {
 
             System.out.print("Enter a username: ");
             String username = scanner.nextLine();
-
             System.out.print("Enter a name: ");
             String name = scanner.nextLine();
-
             System.out.print("Enter age: ");
             int age = Integer.parseInt(scanner.nextLine());
 
@@ -489,7 +467,6 @@ public class SQLDatabase {
                 preparedStatement.executeUpdate();
                 System.out.println(" ");
                 System.out.println("Welcome " + username + "!");
-
             }
 
         } catch (SQLException throwables) {
@@ -502,7 +479,6 @@ public class SQLDatabase {
     private static String login() {
         String username = null;
         try (Connection connection = getConnection()) {
-
             System.out.print("To start playing a game, enter a username: ");
             username = scanner.nextLine();
             //check if user exists
@@ -513,39 +489,24 @@ public class SQLDatabase {
                         username = rs.getString(USERNAME);
                         System.out.println(" ");
                         System.out.println("Welcome " + username + "!");
-
                     } else {
                         //if username doesn't exists, add new
                         System.out.println(username + " not found. Please create a new user to play");
-
                         addUser();
-
                     }
                 }
             } catch (SQLException throwables) {
                 System.out.println("Something went wrong " + throwables.getMessage());
                 throwables.printStackTrace();
             }
-
         } catch (SQLException throwables) {
             System.out.println("Something went wrong " + throwables.getMessage());
             throwables.printStackTrace();
         }
-
         return username;
     }
 
-    private static void displayAllGames(Connection connection) throws SQLException {
-        try (Statement statement = connection.createStatement()) {
-            try (ResultSet resultSet = statement.executeQuery(DISPLAY_GAMES)) {
-//                printAllColumns(resultSet);
-            }
-        }
-    }
-
-
-    private static void printColumnsGameTable() {
-
+    private static void displayAllGames() {
         try (Connection connection = getConnection()) {
             try (Statement statement = connection.createStatement()) {
                 statement.executeQuery(DISPLAY_GAMES);
@@ -562,21 +523,15 @@ public class SQLDatabase {
                         }
                         System.out.println();
                     }
-
                 }
-
             }
-
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
-
-
     }
 
-
+    //NOT INCLUDED IN THE GAME
     private static void printColumnsUsersTable() {
-
         try (Connection connection = getConnection()) {
             try (Statement statement = connection.createStatement()) {
                 statement.executeQuery(DISPLAY_USERS);
@@ -593,16 +548,11 @@ public class SQLDatabase {
                         }
                         System.out.println();
                     }
-
                 }
-
             }
-
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
-
-
     }
 }
 
