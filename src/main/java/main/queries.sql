@@ -18,15 +18,8 @@ CREATE TABLE IF NOT EXISTS games (
   );
  -- player1 VARCHAR(50) NOT NULL,
   --player2 VARCHAR(50) NOT NULL,
-
   --foreign key (player1) REFERENCES users(username),
   --foreign key (player2) REFERENCES users(username)
-
-  -- I would suggest putting player2 and result as a foreign key on users table (same as player1)
-  -- If you want to have second player - PCU - you can actually create this user yourself in a users table. And then always reference it.
-  -- Additionally I would put player1, player2 as NOT NULL and result as NULL.
-  -- Meaning that result will be either a valid user from users table or NULL, when there is a tie.
-
 
 --that will store information about moves for all the games. (e.g. one row - one move).
 --in pcu case player will be null
@@ -126,6 +119,12 @@ UPDATE games SET result = 'win_loose' WHERE RESULT IS NULL;
 SELECT * FROM GAMES ;
 
 SELECT * FROM MOVES ;
+
+SELECT id_games, POSITION_ON_BOARD
+FROM games
+INNER JOIN moves
+ON moves.game = games.id_games
+WHERE ID_GAMES = ?;
 
 
 
