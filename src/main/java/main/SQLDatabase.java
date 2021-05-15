@@ -156,16 +156,10 @@ public class SQLDatabase {
 
             makeTurns(username);//actual game
 
-            //List all moves of this user game.
-//show all existing games first then user can select one game to see all moves.
-
             boolean quit = false;
             do {
                 printActions();
                 int choice = 0;
-//
-//                String input = scanner.nextLine();
-//                choice = Integer.parseInt(input);
 
                 Boolean retry = null;
                 while (retry == null) {
@@ -174,34 +168,10 @@ public class SQLDatabase {
                         choice = Integer.parseInt(input);
                         retry = false;
                     } catch (NumberFormatException e) {
-                        System.out.println("Invalid input! Please choose action between numbers 1-5");
+                        System.out.println("Invalid input! Please choose action between numbers 1-4");
                     }
                 }
-//
-//                if (choice == 0){
-//
-//                }else if(choice == 1) {
-//                    playAgain = true;
-//                    addGameInformation(username, username, " ");
-//                    makeTurns(username);
-//                }else if(choice == 2) {
-//                    System.out.println("Logging out!");
-//                    username = login();
-//                    playGame(username);
-//                }else if((choice == 3 )|| (choice >= 5)) {
-//                    displayAllGames();
-//
-//                    System.out.println("Please choose a number from column GAME_ID to see all made moves in that game.");
-//                    int input = scanner.nextInt();
-//
-//                    selectGameId(input);
-//                }else if(choice==4) {
-//                    System.out.println("The application has stopped working!");
-//                    System.exit(0);
-//                }else{
-//                    System.out.println("Invalid input! Please choose action between numbers 1-5");
-//                    break;
-//                }
+
                 switch (choice) {
                     case 0:
                         break;
@@ -218,60 +188,23 @@ public class SQLDatabase {
                     case 3:
                         displayAllGames();
 
+
                         Scanner scanner1 = new Scanner(System.in);
-                        System.out.println("Please choose a number from column GAME_ID to see all made moves in that game.");
+                        System.out.println("Please choose a number from column GAME_ID to see all the moves made by the user.");
                         int input2 = scanner1.nextInt();
 
-                        selectGameId(input2);
+                        displaySelectedGame(input2);
                         break;
                     case 4:
                         System.out.println("The application has stopped working!");
                         System.exit(0);
                         break;
                     default:
-                        System.out.println("Invalid input! Please choose action between numbers 1-5");
+                        System.out.println("Invalid input! Please choose action between numbers 1-4");
                         break;
                 }
             } while (!quit);
         } while (!playAgain);
-    }
-
-    private static void check() {
-
-        System.out.println("Please choose a number from column GAME_ID to see all made moves in that game.");
-        int input = scanner.nextInt();
-
-        selectGameId(input);
-    }
-
-    private static void displaymoves() {
-
-        displayAllGames();
-
-//        boolean quit = false;
-//        do {
-
-        System.out.println("Please choose a number from column GAME_ID to see all made moves in that game.");
-        int input = scanner.nextInt();
-//            char choice = ' ';
-//
-//            switch (choice) {
-//                case 'Y':
-//                    displayAllGames();
-//                    selectGameId(input);
-//                    break;
-//                case 'N':
-//                    quit = true;
-//                    break;
-//                default:
-//                    System.out.println("Invalid input. Please enter a letter Y or N!");
-//            }
-
-        selectGameId(input);
-
-//        } while (!quit);
-
-
     }
 
 
@@ -641,27 +574,27 @@ public class SQLDatabase {
         return id;
     }
 
-
-    private static final String JOIN_PLAYER = "SELECT " + PLAYER_1 + " FROM " + TABLE_GAMES + " INNER JOIN " + TABLE_MOVES + " ON " +
-            TABLE_MOVES + "." + PLAYER + "=" + TABLE_GAMES + "." + PLAYER_1 + ";";
-
-    public static void joinPlayer() {
-
-        try (Connection connection = getConnection()) {
-            try (Statement statement = connection.createStatement()) {
-                statement.executeQuery(JOIN_PLAYER);
-                try (ResultSet rs = statement.executeQuery(JOIN_PLAYER)) {
-                    while (rs.next()) {
-                        String player = rs.getString(PLAYER_1);
-                    }
-                }
-            }
-        } catch (SQLException throwables) {
-            System.out.println("Something went wrong " + throwables.getMessage());
-            throwables.printStackTrace();
-        }
-
-    }
+//
+//    private static final String JOIN_PLAYER = "SELECT " + PLAYER_1 + " FROM " + TABLE_GAMES + " INNER JOIN " + TABLE_MOVES + " ON " +
+//            TABLE_MOVES + "." + PLAYER + "=" + TABLE_GAMES + "." + PLAYER_1 + ";";
+//
+//    public static void joinPlayer() {
+//
+//        try (Connection connection = getConnection()) {
+//            try (Statement statement = connection.createStatement()) {
+//                statement.executeQuery(JOIN_PLAYER);
+//                try (ResultSet rs = statement.executeQuery(JOIN_PLAYER)) {
+//                    while (rs.next()) {
+//                        String player = rs.getString(PLAYER_1);
+//                    }
+//                }
+//            }
+//        } catch (SQLException throwables) {
+//            System.out.println("Something went wrong " + throwables.getMessage());
+//            throwables.printStackTrace();
+//        }
+//
+//    }
 
 
     private static final String UPDATE = "UPDATE " + TABLE_GAMES + " SET " + RESULT + " = ? WHERE " + RESULT + " = ?;";
@@ -687,44 +620,33 @@ public class SQLDatabase {
             " FROM " + TABLE_GAMES + " INNER JOIN " + TABLE_MOVES + " ON " + TABLE_MOVES + "." + GAME + "=" +
             TABLE_GAMES + "." + ID_GAMES + " WHERE " + ID_GAMES + " = ?;";
 
-    public static void selectGameId(int id) {
-
+//    public static void selectGameId(int id) {
+//        try (Connection connection = getConnection()) {
+//            try (PreparedStatement statement = connection.prepareStatement(USER_CHOOSE_GAME)) {
+//                statement.setInt(1, id);
+//
+//                try (ResultSet rs = statement.executeQuery()) {
+//                    while (rs.next()) {
+//                        String playerName = rs.getString(PLAYER_1);
+//                        int idGame = rs.getInt(ID_GAMES);
+//                        int positionOnBoard = rs.getInt(POSITION_ON_BOARD);
+//                        System.out.println(playerName + " " + idGame + " " + positionOnBoard);
+//                    }
+//                }
+//            }
+//        } catch (SQLException throwables) {
+//            System.out.println("Something went wrong " + throwables.getMessage());
+//            throwables.printStackTrace();
+//        }
+//    }
+//
+//    //*************
+    private static void displaySelectedGame(int id) {
         try (Connection connection = getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement(USER_CHOOSE_GAME)) {
                 statement.setInt(1, id);
 
                 try (ResultSet rs = statement.executeQuery()) {
-                    while (rs.next()) {
-                        String playerName = rs.getString(PLAYER_1);
-                        int idGame = rs.getInt(ID_GAMES);
-                        int positionOnBoard = rs.getInt(POSITION_ON_BOARD);
-                        System.out.println(playerName + " " + idGame + " " + positionOnBoard);
-                    }
-
-//                    if (rs.next()) {
-//                        String playerName = rs.getString(PLAYER_1);
-//                        int idGame = rs.getInt(ID_GAMES);
-//                        int positionOnBoard = rs.getInt(POSITION_ON_BOARD);
-//                        System.out.println(playerName + " " + idGame + " " + positionOnBoard);
-//                    } else {
-//                        System.out.println("Your chosen GAME_ID number not found in the list.");
-//                    }
-                }
-            }
-        } catch (SQLException throwables) {
-            System.out.println("Something went wrong " + throwables.getMessage());
-            throwables.printStackTrace();
-        }
-
-    }
-
-    //*************
-    private static void displaySelectedGame() {
-        try (Connection connection = getConnection()) {
-            try (Statement statement = connection.createStatement()) {
-                statement.executeQuery(USER_CHOOSE_GAME);
-
-                try (ResultSet rs = statement.executeQuery(USER_CHOOSE_GAME)) {
 
                     ResultSetMetaData metaData = rs.getMetaData();
                     int columnCount = metaData.getColumnCount();
@@ -741,6 +663,7 @@ public class SQLDatabase {
                 }
             }
         } catch (SQLException throwables) {
+            System.out.println("Something went wrong " + throwables.getMessage());
             throwables.printStackTrace();
         }
     }
