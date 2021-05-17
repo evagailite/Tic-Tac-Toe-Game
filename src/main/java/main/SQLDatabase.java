@@ -174,7 +174,6 @@ public class SQLDatabase {
                         playGame(username);
                         break;
                     case 3:
-
                         Scanner scanner1 = new Scanner(System.in);
                         Boolean test = null;
                         while (test == null) {
@@ -459,7 +458,7 @@ public class SQLDatabase {
                 preparedStatement.setInt(3, age);
                 preparedStatement.executeUpdate();
                 System.out.println(" ");
-                System.out.println("Welcome " + username + "! Please read the game rules below:");
+                System.out.println("Welcome " + username + "! Please read the short description of the game:");
             }
         } catch (
                 SQLException throwables) {
@@ -480,7 +479,7 @@ public class SQLDatabase {
                     if (rs.next()) {
                         username = rs.getString(USERNAME);
                         System.out.println(" ");
-                        System.out.println("Welcome " + username + "!");
+                        System.out.println("Welcome " + username + "! Please read the short description of the game:");
                     } else {
                         //if username doesn't exists, add new
                         System.out.println(username + " not found. Please create a new user to play!");
