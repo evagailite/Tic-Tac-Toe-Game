@@ -36,6 +36,12 @@ CREATE TABLE IF NOT EXISTS moves (
   --foreign key (game) REFERENCES games(id_games)
 
 
+INSERT INTO USERS (username, name, age)
+VALUES ('Eva', 'Eva', 31);
+
+INSERT INTO USERS (username, name, age)
+VALUES ('CPU', 'CPU', 100);
+
 --3 queries
 
 INSERT INTO MOVES (player, game, position_on_board)
@@ -89,8 +95,8 @@ SELECT id_games FROM games;
 
 SELECT player1 FROM GAMES;
 
---get user id
-SELECT
+--get username
+SELECT username FROM users;
 
 --display moves for certain game
 SELECT player, position_on_board
@@ -125,6 +131,41 @@ FROM games
 INNER JOIN moves
 ON moves.game = games.id_games
 WHERE ID_GAMES = ?;
+
+
+----------------
+CREATE TABLE IF NOT EXISTS users (
+  username VARCHAR(50) NOT NULL,
+  name VARCHAR(50) NOT NULL,
+  age INTEGER,
+  CONSTRAINT pk_username PRIMARY KEY (username)
+);
+
+
+
+CREATE TABLE IF NOT EXISTS games (
+  id_games INTEGER AUTO_INCREMENT PRIMARY KEY,
+  player1 VARCHAR(50) NOT NULL REFERENCES users (username),
+  player2 VARCHAR(50) NOT NULL REFERENCES users (username),
+  result VARCHAR(100) NULL
+  );
+
+
+CREATE TABLE IF NOT EXISTS moves (
+  id_moves INTEGER AUTO_INCREMENT PRIMARY KEY,
+  player VARCHAR(50) REFERENCES users (username),
+  game INTEGER REFERENCES games(id_games),
+  position_on_board INTEGER
+  );
+
+INSERT INTO USERS (username, name, age)
+VALUES ('CPU', 'CPU', 100);
+--------------------------------
+INSERT INTO USERS (username, name, age)
+VALUES ('Eva', 'Eva', 31);
+
+
+
 
 
 
